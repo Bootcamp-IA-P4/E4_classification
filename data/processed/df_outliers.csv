@@ -1,0 +1,8 @@
+,n_outliers,pct_outliers,min_val,max_val
+Height_(cm),1055,0.34%,91.0,241.0
+Weight_(kg),7326,2.37%,24.95,293.02
+BMI,9530,3.09%,12.02,99.33
+Alcohol_Consumption,36147,11.70%,0.0,30.0
+Fruit_Consumption,68225,22.09%,0.0,120.0
+Green_Vegetables_Consumption,11878,3.85%,0.0,128.0
+FriedPotato_Consumption,19456,6.30%,0.0,128.0
