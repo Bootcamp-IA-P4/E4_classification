@@ -74,4 +74,4 @@ La solución final debe incluir una aplicación que reciba los datos de un clien
 
 ## Estructura Inicial del Proyecto
 
-- Este repositorio contiene la estructura base y archivos vacíos para comenzar el desarrollo. A medida que avances, agrega notebooks, scripts, documentación y recursos en las carpetas correspondientes.
+- Este repositorio contiene la estructura base y archivos vacíos para comenzar el desarrollo. A medida que avances, agrega notebooks, scripts, documentación y recursos en las carpetas correspondientes. .
