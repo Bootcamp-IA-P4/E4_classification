@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Predicción de Enfermedad Cardíaca</title>
+    <link rel="stylesheet" href="/static/estilos.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Predicción de Riesgo de Enfermedad Cardíaca</h1>
+        <form id="formulario-prediccion">
+            <h2>Datos del Paciente</h2>
+            <div class="campo">
+                <label>Altura (cm):</label>
+                <input type="number" name="altura" step="0.1" required>
+            </div>
+            <div class="campo">
+                <label>Peso (kg):</label>
+                <input type="number" name="peso" step="0.1" required>
+            </div>
+            <div class="campo">
+                <label>IMC:</label>
+                <input type="number" name="imc" step="0.1" required>
+            </div>
+            <div class="campo">
+                <label>Consumo de alcohol (veces/semana):</label>
+                <input type="number" name="consumo_alcohol" min="0" max="7" required>
+            </div>
+            <div class="campo">
+                <label>Consumo de fruta (porciones/semana):</label>
+                <input type="number" name="consumo_fruta" min="0" max="21" required>
+            </div>
+            <div class="campo">
+                <label>Consumo de vegetales verdes (porciones/semana):</label>
+                <input type="number" name="consumo_vegetales" min="0" max="21" required>
+            </div>
+            <div class="campo">
+                <label>Consumo de papas fritas (porciones/semana):</label>
+                <input type="number" name="consumo_papas" min="0" max="21" required>
+            </div>
+            <div class="campo">
+                <label>Salud general:</label>
+                <select name="salud_general" required>
+                    <option value="0">Mala</option>
+                    <option value="1">Regular</option>
+                    <option value="2">Buena</option>
+                    <option value="3">Muy buena</option>
+                    <option value="4">Excelente</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>Chequeo médico:</label>
+                <select name="chequeo_medico" required>
+                    <option value="0">Nunca</option>
+                    <option value="1">Hace 5 años o más</option>
+                    <option value="2">En los últimos 5 años</option>
+                    <option value="3">En los últimos 2 años</option>
+                    <option value="4">En el último año</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>¿Realiza ejercicio?</label>
+                <select name="ejercicio" required>
+                    <option value="1">Sí</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>¿Antecedente de cáncer de piel?</label>
+                <select name="cancer_piel" required>
+                    <option value="1">Sí</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>¿Antecedente de otro cáncer?</label>
+                <select name="otro_cancer" required>
+                    <option value="1">Sí</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>¿Depresión diagnosticada?</label>
+                <select name="depresion" required>
+                    <option value="1">Sí</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>¿Diabetes?</label>
+                <select name="diabetes" required>
+                    <option value="0">No</option>
+                    <option value="1">No, pre-diabetes o borderline</option>
+                    <option value="2">Sí</option>
+                    <option value="3">Sí, solo durante embarazo</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>¿Artritis?</label>
+                <select name="artritis" required>
+                    <option value="1">Sí</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>Sexo:</label>
+                <select name="sexo" required>
+                    <option value="0">Masculino</option>
+                    <option value="1">Femenino</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>Historial de tabaquismo:</label>
+                <select name="historial_tabaquismo" required>
+                    <option value="1">Sí</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label>Edad:</label>
+                <select name="edad" required>
+                    <option value="18-24">18-24</option>
+                    <option value="25-29">25-29</option>
+                    <option value="30-34">30-34</option>
+                    <option value="35-39">35-39</option>
+                    <option value="40-44">40-44</option>
+                    <option value="45-49">45-49</option>
+                    <option value="50-54">50-54</option>
+                    <option value="55-59">55-59</option>
+                    <option value="60-64">60-64</option>
+                    <option value="65-69">65-69</option>
+                    <option value="70-74">70-74</option>
+                    <option value="75-79">75-79</option>
+                    <option value="80+">80 o más</option>
+                </select>
+            </div>
+            <button type="submit">Predecir riesgo</button>
+        </form>
+        <div id="resultado" class="resultado"></div>
+    </div>
+    <script src="/static/app.js"></script>
+</body>
+</html>
