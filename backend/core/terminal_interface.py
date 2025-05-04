@@ -1,5 +1,5 @@
-from backend.services.translation_service import get_feature_translations, get_feature_descriptions
-from backend.models.schemas import PredictionInput
+from models.schemas import PredictionInput
+from services.translations_service import get_feature_descriptions, get_feature_translations
 
 class TerminalInterface:
     def __init__(self, model):
@@ -36,9 +36,9 @@ class TerminalInterface:
         return PredictionInput(**user_data)
 
     def run(self):
-        from backend.services.model_service import make_prediction
+        from services.model_service import make_prediction
         user_input = self.collect_input()
-        result = await make_prediction(user_input)
+        result = make_prediction(user_input)
         
         print("\n=== Resultado ===")
         print(f"Riesgo: {'ALTO' if result['prediction'] else 'BAJO'}")
