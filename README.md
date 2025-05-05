@@ -1,3 +1,63 @@
+# Guía de Inicio Rápido
+
+---
+
+## 🚀 Pasos para ejecutar la aplicación Dash y conectar con la base de datos
+
+### 1. Clona el repositorio y navega a la carpeta del proyecto
+
+```bash
+cd E4_classification
+```
+
+### 2. Instala las dependencias necesarias
+
+Asegúrate de tener Python 3.8+ instalado. Luego ejecuta:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configura la base de datos
+
+- Crea una base de datos MySQL con los parámetros indicados en el archivo `.env` (puedes modificar los valores según tu entorno):
+  - MYSQL_USER
+  - MYSQL_PASSWORD
+  - MYSQL_HOST
+  - MYSQL_PORT
+  - MYSQL_DB
+
+- Asegúrate de que el usuario y la contraseña tengan permisos para crear tablas y escribir datos.
+
+### 4. Verifica la configuración del archivo `.env`
+
+El archivo `.env` debe estar en la raíz del proyecto y contener los datos de conexión a la base de datos. Ejemplo:
+
+```
+MYSQL_USER=root
+MYSQL_PASSWORD=tu_password
+MYSQL_HOST=127.0.0.1
+MYSQL_PORT=3306
+MYSQL_DB=registros_usuarios
+```
+
+### 5. Ejecuta la aplicación Dash
+
+Desde la raíz del proyecto, ejecuta:
+
+```bash
+python -m app.dashy
+```
+
+Esto iniciará la aplicación Dash. Por defecto, estará disponible en [http://127.0.0.1:8050](http://127.0.0.1:8050)
+
+### 6. Uso de la aplicación
+
+- Ingresa los datos requeridos en la interfaz web.
+- Al enviar el formulario, la predicción se almacenará automáticamente en la base de datos configurada.
+
+---
+
 # Proyecto de Clasificación
 
 ---
