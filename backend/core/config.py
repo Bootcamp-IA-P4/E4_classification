@@ -1,5 +1,8 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "CVD Prediction API"
@@ -8,6 +11,13 @@ class Settings(BaseSettings):
     # Rutas relativas al directorio del proyecto (backend/)
     MODEL_PATH: str = "data/modelo_predictor_enfermedad_cardiaca.pkl"
     FEATURES_PATH: str = "data/features_description.json"
+    
+    # Configuración de base de datos
+    MYSQL_USER: str = "root"
+    MYSQL_PASSWORD: str = ""
+    MYSQL_HOST: str = "localhost"
+    MYSQL_DB: str = "heart_disease_prediction"
+    MYSQL_PORT: str = "3306"
     
     # Método para obtener paths absolutos
     def get_features_path(self):
@@ -18,5 +28,7 @@ class Settings(BaseSettings):
 
     class Config:
         case_sensitive = True
+        env_file = ".env"
+        env_file_encoding = "utf-8"
 
 settings = Settings()

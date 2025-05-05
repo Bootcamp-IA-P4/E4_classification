@@ -44,6 +44,102 @@
                 "75-79": "75 a 79 años",
                 "80+": "80 años o más"
             }
+        },
+        "Alcohol_Consumption": {
+            "description": "Días por mes que consume alcohol",
+            "type": "float",
+            "range": [0, 30]
+        },
+        "Fruit_Consumption": {
+            "description": "Veces por día que consume frutas",
+            "type": "float",
+            "range": [0, 10]
+        },
+        "Green_Vegetables_Consumption": {
+            "description": "Veces por día que consume vegetales verdes",
+            "type": "float",
+            "range": [0, 10]
+        },
+        "FriedPotato_Consumption": {
+            "description": "Veces por día que consume papas fritas",
+            "type": "float",
+            "range": [0, 10]
+        },
+        "Checkup": {
+            "description": "Último chequeo médico",
+            "type": "categorical",
+            "values": {
+                "0": "Nunca",
+                "1": "Hace más de 5 años",
+                "2": "En los últimos 5 años",
+                "3": "En el último año",
+                "4": "En los últimos 6 meses"
+            }
+        },
+        "Exercise": {
+            "description": "Realiza ejercicio físico regular",
+            "type": "categorical",
+            "values": {
+                "0": "No",
+                "1": "Sí"
+            }
+        },
+        "Skin_Cancer": {
+            "description": "Diagnóstico previo de cáncer de piel",
+            "type": "categorical",
+            "values": {
+                "0": "No",
+                "1": "Sí"
+            }
+        },
+        "Other_Cancer": {
+            "description": "Diagnóstico previo de otro tipo de cáncer",
+            "type": "categorical",
+            "values": {
+                "0": "No",
+                "1": "Sí"
+            }
+        },
+        "Depression": {
+            "description": "Diagnóstico previo de depresión",
+            "type": "categorical",
+            "values": {
+                "0": "No",
+                "1": "Sí"
+            }
+        },
+        "Diabetes": {
+            "description": "Diagnóstico previo de diabetes",
+            "type": "categorical",
+            "values": {
+                "0": "No",
+                "1": "Sí"
+            }
+        },
+        "Arthritis": {
+            "description": "Diagnóstico previo de artritis",
+            "type": "categorical",
+            "values": {
+                "0": "No",
+                "1": "Sí"
+            }
+        },
+        "Sex": {
+            "description": "Sexo biológico",
+            "type": "categorical",
+            "values": {
+                "0": "Femenino",
+                "1": "Masculino"
+            }
+        },
+        "Smoking_History": {
+            "description": "Historial de tabaquismo",
+            "type": "categorical",
+            "values": {
+                "0": "No fumador",
+                "1": "Ex-fumador",
+                "2": "Fumador actual"
+            }
         }
     },
     "translations": {
