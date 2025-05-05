@@ -1,15 +1,7 @@
-import warnings
 import dash
-from dash import html, dcc, Input, Output, State
+from dash import html, dcc, Input, Output, State, ctx
 import requests
-import os
-
-# Suprimir advertencias de deprecación
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-
-# Configuración del backend
-BACKEND_URL = "http://localhost:8000"
-PREDICT_ENDPOINT = f"{BACKEND_URL}/api/v1/routes/predict"
+import dash_daq as daq
 
 # App initialization
 app = dash.Dash(
@@ -32,143 +24,29 @@ def calcular_imc(peso, altura_cm):
 
 # Layout
 app.layout = html.Div([
-    html.Video(
-        src='/assets/fondo_corazon.mp4', 
-        autoPlay=True, 
-        loop=True, 
-        muted=True,
-        style={
-            'position': 'fixed',
-            'width': '100%',
-            'height': '100%',
-            'objectFit': 'cover',
-            'zIndex': '-1'
-        }
-    ),
+
+    html.Video(src='/assets/fondo_corazon.mp4', autoPlay=True, loop=True, muted=True,
+               style={
+                   'position': 'fixed',
+                   'width': '100%',
+                   'height': '100%',
+                   'objectFit': 'cover',
+                   'zIndex': '-1'
+               }),
 
     html.Div([
+
         html.H1("Evaluación de Riesgo Cardiovascular", className="titulo"),
 
-        # Bloque general
         html.Div(id="bloque-general", className="formulario-bloque", children=[
             html.Label("Altura (cm)"),
-            dcc.Input(id="altura", type="number", step="0.1", required=True, min=100, max=250),
+            dcc.Input(id="altura", type="number", required=True),
 
             html.Label("Peso (kg)"),
-            dcc.Input(id="peso", type="number", step="0.1", required=True, min=30, max=300),
+            dcc.Input(id="peso", type="number", required=True),
 
             html.Label("IMC"),
-            dcc.Input(id="imc", type="number", step="0.1", debounce=True, disabled=True),
-
-            html.Label("Consumo de alcohol (veces/semana)"),
-            dcc.Input(id="alcohol", type="number", min=0, max=7, required=True),
-
-            html.Label("Consumo de fruta (porciones/semana)"),
-            dcc.Input(id="fruta", type="number", min=0, max=21, required=True),
-
-            html.Label("Consumo de vegetales verdes (porciones/semana)"),
-            dcc.Input(id="verduras", type="number", min=0, max=21, required=True),
-
-            html.Label("Consumo de papas fritas (porciones/semana)"),
-            dcc.Input(id="papas", type="number", min=0, max=21, required=True),
-
-            html.Div(
-                "Es necesario completar todos los campos para poder realizar el estudio.",
-                id="mensaje-aviso-1", 
-                className="mensaje-aviso", 
-                style={"display": "none"}
-            ),
-        ]),
-
-        # Bloque médico
-        html.Div(id="bloque-medico", className="formulario-bloque", style={"display": "none"}, children=[
-            html.Label("Salud general"),
-            dcc.Dropdown(
-                id="salud_general", 
-                options=[
-                    {"label": "Mala", "value": 0},
-                    {"label": "Regular", "value": 1},
-                    {"label": "Buena", "value": 2},
-                    {"label": "Muy buena", "value": 3},
-                    {"label": "Excelente", "value": 4}
-                ],
-                placeholder="Selecciona una opción"
-            ),
-
-            html.Label("Chequeo médico"),
-            dcc.Dropdown(
-                id="chequeo", 
-                options=[
-                    {"label": "Nunca", "value": 0},
-                    {"label": "Hace 5 años o más", "value": 1},
-                    {"label": "En los últimos 5 años", "value": 2},
-                    {"label": "En los últimos 2 años", "value": 3},
-                    {"label": "En el último año", "value": 4}
-                ],
-                placeholder="Selecciona una opción"
-            ),
-
-            html.Label("¿Realiza ejercicio?"),
-            dcc.Dropdown(
-                id="ejercicio", 
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
-                placeholder="Selecciona una opción"
-            ),
-
-            html.Label("¿Antecedente de cáncer de piel?"),
-            dcc.Dropdown(
-                id="piel", 
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
-                placeholder="Selecciona una opción"
-            ),
-
-            html.Label("¿Antecedente de otro cáncer?"),
-            dcc.Dropdown(
-                id="cancer", 
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
-                placeholder="Selecciona una opción"
-            ),
-
-            html.Label("¿Depresión diagnosticada?"),
-            dcc.Dropdown(
-                id="depresion", 
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
-                placeholder="Selecciona una opción"
-            ),
-
-            html.Label("¿Diabetes?"),
-            dcc.Dropdown(
-                id="diabetes", 
-                options=[
-                    {"label": "No", "value": 0},
-                    {"label": "No, pre-diabetes o borderline", "value": 1},
-                    {"label": "Sí", "value": 2},
-                    {"label": "Sí, solo durante embarazo", "value": 3}
-                ],
-                placeholder="Selecciona una opción"
-            ),
-
-            html.Label("¿Artritis?"),
-            dcc.Dropdown(
-                id="artritis", 
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
-                placeholder="Selecciona una opción"
-            ),
+            dcc.Input(id="imc", type="number", required=True, debounce=True),
 
             html.Label("Sexo"),
             dcc.Dropdown(
@@ -180,47 +58,66 @@ app.layout = html.Div([
                 placeholder="Selecciona sexo"
             ),
 
-            html.Label("Historial de tabaquismo"),
-            dcc.Dropdown(
-                id="historial_tabaquismo",
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
-                placeholder="Selecciona una opción"
-            ),
-            
             html.Label("Edad"),
-            dcc.Dropdown(
-                id="edad",
-                options=[
-                    {"label": "18-24", "value": "18-24"},
-                    {"label": "25-29", "value": "25-29"},
-                    {"label": "30-34", "value": "30-34"},
-                    {"label": "35-39", "value": "35-39"},
-                    {"label": "40-44", "value": "40-44"},
-                    {"label": "45-49", "value": "45-49"},
-                    {"label": "50-54", "value": "50-54"},
-                    {"label": "55-59", "value": "55-59"},
-                    {"label": "60-64", "value": "60-64"},
-                    {"label": "65-69", "value": "65-69"},
-                    {"label": "70-74", "value": "70-74"},
-                    {"label": "75-79", "value": "75-79"},
-                    {"label": "80 o más", "value": "80+"}
-                ],
-                placeholder="Selecciona rango de edad"
-            ),
-            
-            html.Button("Evaluar Riesgo", id="submit-button", n_clicks=0, className="boton-evaluar"),
-            html.Div(id="datos-para-enviar", style={"display": "none"})
+            dcc.Input(id="edad", type="number", required=True),
+
+            html.Div("Es necesario completar todos los campos para poder realizar el estudio.",
+                     id="mensaje-aviso-1", className="mensaje-aviso", style={"display": "none"}),
+
         ]),
 
-        # Resultados
+        html.Div(id="bloque-habitos", className="formulario-bloque", style={"display": "none"}, children=[
+            html.Label("Consumo de alcohol (0 no / 1 sí)"),
+            dcc.Dropdown(id="alcohol", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+
+            html.Label("Fruta diaria (0 no / 1 sí)"),
+            dcc.Dropdown(id="fruta", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+
+            html.Label("Vegetales verdes (0 no / 1 sí)"),
+            dcc.Dropdown(id="verduras", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+
+            html.Label("Papas fritas (0 no / 1 sí)"),
+            dcc.Dropdown(id="papas", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+
+            html.Div("Es necesario completar todos los campos para poder continuar.",
+                     id="mensaje-aviso-2", className="mensaje-aviso", style={"display": "none"}),
+        ]),
+
+        html.Div(id="bloque-medico", className="formulario-bloque", style={"display": "none"}, children=[
+            html.Label("Salud general (1-5)"),
+            dcc.Slider(id="salud_general", min=1, max=5, step=1, marks={i: str(i) for i in range(1, 6)}),
+
+            html.Label("Chequeo médico reciente (0 no / 1 sí)"),
+            dcc.Dropdown(id="chequeo", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+
+            html.Label("Ejercicio (0 no / 1 sí)"),
+            dcc.Dropdown(id="ejercicio", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+
+            html.Label("Cáncer de piel"),
+            dcc.Dropdown(id="piel", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+
+            html.Label("Otro cáncer"),
+            dcc.Dropdown(id="cancer", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+
+            html.Label("Depresión"),
+            dcc.Dropdown(id="depresion", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+
+            html.Label("Diabetes"),
+            dcc.Dropdown(id="diabetes", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+
+            html.Label("Artritis"),
+            dcc.Dropdown(id="artritis", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+
+            html.Div(id="datos-para-enviar"),        
+            html.Button("Evaluar Riesgo", id="submit-button", n_clicks=0)
+        ]),
+
         html.Div(id="resultado", className="resultado"),
+
     ], className="contenedor-form")
 ])
 
-# Callbacks
+# Cálculo automático del IMC
 @app.callback(
     Output("imc", "value"),
     Input("peso", "value"),
@@ -232,27 +129,41 @@ def calcular_imc_autom(peso, altura, imc_actual):
         return calcular_imc(peso, altura)
     return dash.no_update
 
+# Validación y transición entre bloques
 @app.callback(
-    Output("bloque-medico", "style"),
+    Output("bloque-habitos", "style"),
     Output("bloque-general", "style"),
     Output("mensaje-aviso-1", "style"),
     Input("altura", "value"),
     Input("peso", "value"),
     Input("imc", "value"),
-    Input("alcohol", "value"),
-    Input("fruta", "value"),
-    Input("verduras", "value"),
-    Input("papas", "value")
+    Input("sexo", "value"),
+    Input("edad", "value")
 )
-def validar_general(altura, peso, imc, alcohol, fruta, verduras, papas):
-    if all(x is not None for x in [altura, peso, imc, alcohol, fruta, verduras, papas]):
+def validar_general(altura, peso, imc, sexo, edad):
+    if all(x is not None for x in [altura, peso, imc, sexo, edad]):
         return {"display": "block"}, {"display": "none"}, {"display": "none"}
     else:
         return {"display": "none"}, {"display": "block"}, {"display": "block"}
 
 @app.callback(
+    Output("bloque-medico", "style"),
+    Output("mensaje-aviso-2", "style"),
+    Input("alcohol", "value"),
+    Input("fruta", "value"),
+    Input("verduras", "value"),
+    Input("papas", "value")
+)
+def validar_habitos(alcohol, fruta, verduras, papas):
+    if all(x is not None for x in [alcohol, fruta, verduras, papas]):
+        return {"display": "block"}, {"display": "none"}
+    else:
+        return {"display": "none"}, {"display": "block"}
+
+# Resultado de predicción
+@app.callback(
     Output("resultado", "children"),
-    Output("datos-para-enviar", "children"),
+    Output("datos-para-enviar", "children"),  # Nuevo Output para mostrar los datos
     Input("submit-button", "n_clicks"),
     State("altura", "value"),
     State("peso", "value"),
@@ -270,87 +181,54 @@ def validar_general(altura, peso, imc, alcohol, fruta, verduras, papas):
     State("cancer", "value"),
     State("depresion", "value"),
     State("diabetes", "value"),
-    State("artritis", "value"),
-    State("historial_tabaquismo", "value"),
+    State("artritis", "value")
 )
-def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, verduras, papas,
-                     salud_general, chequeo, ejercicio, piel, cancer, depresion, diabetes, artritis, 
-                     historial_tabaquismo):
-    if not n_clicks:
-        return "", ""
-    
-    campos = [altura, peso, imc, sexo, edad, alcohol, fruta, verduras, papas,
-              salud_general, chequeo, ejercicio, piel, cancer, depresion, diabetes, artritis,
-              historial_tabaquismo]
-    
-    if any(x is None for x in campos):
-        return html.Div("Por favor, completa todos los campos antes de evaluar."), ""
+def predecir(n_clicks, altura, peso, imc, sexo, edad,
+             alcohol, fruta, verduras, papas, salud_general, chequeo,
+             ejercicio, piel, cancer, depresion, diabetes, artritis):
 
-    try:
-        # Conversión explícita de tipos
-        datos = {
-            "altura": float(altura),
-            "peso": float(peso),
-            "imc": float(imc),
-            "sexo": int(sexo),
-            "edad": edad,
-            "consumo_alcohol": int(alcohol),
-            "consumo_fruta": int(fruta),
-            "consumo_vegetales": int(verduras),
-            "consumo_papas": int(papas),
-            "salud_general": int(salud_general),
-            "chequeo_medico": int(chequeo),
-            "ejercicio": int(ejercicio),
-            "cancer_piel": int(piel),
-            "otro_cancer": int(cancer),
-            "depresion": int(depresion),
-            "diabetes": int(diabetes),
-            "artritis": int(artritis),
-            "historial_tabaquismo": int(historial_tabaquismo)
-        }
-    except (TypeError, ValueError) as e:
-        return html.Div(f"Error en los datos: {str(e)}"), ""
+    datos = {
+        "height": altura,
+        "weight": peso,
+        "BMI": imc,
+        "Sex": sexo,
+        "Age": edad,
+        "AlcoholDrinking": alcohol,
+        "Fruit": fruta,
+        "GreenVeggies": verduras,
+        "FriedPotato": papas,
+        "GeneralHealth": salud_general,
+        "Checkup": chequeo,
+        "PhysicalActivity": ejercicio,
+        "SkinCancer": piel,
+        "OtherCancer": cancer,
+        "Depression": depresion,
+        "Diabetes": diabetes,
+        "Arthritis": artritis
+    }
 
-    try:
-        print(f"Enviando solicitud a: {PREDICT_ENDPOINT}")
-        print(f"Datos enviados: {datos}")
-        
-        response = requests.post(
-            PREDICT_ENDPOINT,
-            json=datos,
-            headers={"Content-Type": "application/json"},
-            timeout=10
-        )
-        
-        print(f"Respuesta del servidor ({response.status_code}): {response.text}")
-        
-        if response.status_code != 200:
-            return html.Div(f"Error del servidor: {response.text}"), ""
+    if n_clicks > 0:
+        try:
+            response = requests.post("http://127.0.0.1:8000/predecir", json=datos)
+            result = response.json()
+            resultado_div = html.Div([
+                html.H3("Resultado del Estudio:"),
+                html.P(f"Probabilidad: {round(result['probabilidad'] * 100)}%"),
+                html.P(f"Riesgo estimado: {result['riesgo']}"),
+                html.P(result['mensaje']),
+                # Placeholder para gráficas
+                html.Div(id="graficas-analisis", children=[
+                    html.H4("Gráficas e Indicadores relacionados (próximamente)"),
+                ])
+            ])
+            datos_div = html.Pre(str(datos))  # Mostrar los datos aquí
+            return resultado_div, datos_div
+        except Exception:
+            error_div = html.Div("Error de conexión con el servidor.", style={"color": "red"})
+            datos_div = html.Pre(str(datos)) # Mostrar los datos incluso en caso de error
+            return error_div, datos_div
+    return "", "" # Retorna vacío si el botón no ha sido clickeado aún
 
-        resultado = response.json()
-
-        # Validar estructura de respuesta
-        if "prediction" not in resultado or "probability" not in resultado:
-            return html.Div("Respuesta del servidor inválida"), ""
-
-        riesgo_color = "red" if resultado["prediction"] == 1 else "green"
-        mensaje = ("⚠️ Riesgo elevado de enfermedad cardíaca. Consulte a su médico." 
-                  if resultado["prediction"] == 1 
-                  else "✅ Bajo riesgo de enfermedad cardíaca.")
-        
-        return html.Div([
-            html.H2("Resultado:", className="resultado-titulo"),
-            html.P(f"Probabilidad: {round(resultado['probability']*100, 2)}%", className="resultado-probabilidad"),
-            html.P(f"Riesgo: {'Alto' if resultado['prediction'] == 1 else 'Bajo'}", 
-                  style={"color": riesgo_color, "font-weight": "bold"}, className="resultado-riesgo"),
-            html.P(mensaje, className="resultado-mensaje")
-        ]), ""
-
-    except requests.exceptions.RequestException as e:
-        error_msg = f"Error al conectar con el servidor: {str(e)}"
-        if hasattr(e, 'response') and e.response:
-            error_msg += f"\nDetalles: {e.response.text}"
-        return html.Div(error_msg, className="error-mensaje"), ""
 
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
