@@ -5,8 +5,11 @@ import dash_daq as daq
 import pandas as pd
 import joblib
 import os
-from db.db import SessionLocal
-from models.models import Prediccion
+from backend.db.database import db_config
+from backend.db.models import PredictionRecord 
+# from db.db import SessionLocal
+# from models.models import Prediccion
+
 
 # App initialization
 app = dash.Dash(
@@ -198,6 +201,11 @@ def validar_habitos(alcohol, fruta, verduras, papas):
 )
 def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, verduras, papas,
                      salud_general, chequeo, ejercicio, piel, cancer, depresion, diabetes, artritis):
+    # Comprobamos la BDD
+    print("\n=== Verificación antes de usar DB ===")
+    print(f"¿SessionLocal existe?: {hasattr(db_config, 'SessionLocal')}")
+    print(f"¿SessionLocal es callable?: {callable(getattr(db_config, 'SessionLocal', None))}")
+    
     if not n_clicks:
         return "", ""
     campos = [altura, peso, imc, sexo, edad, alcohol, fruta, verduras, papas,
@@ -240,8 +248,12 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, v
     else:
         mensaje = "✅ Bajo riesgo de enfermedad cardíaca. Mantenga sus controles médicos regulares."
     # Guardar en base de datos
-    db = SessionLocal()
-    registro = Prediccion(
+    # Nos aseguramos de inicializar la BDD
+    if db_config.SessionLocal is None:
+        db_config.initialize()
+    db = db_config.SessionLocal()
+
+    registro = PredictionRecord(
         altura=altura,
         peso=peso,
         imc=imc,
