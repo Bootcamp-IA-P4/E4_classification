@@ -2,6 +2,11 @@ import dash
 from dash import html, dcc, Input, Output, State, ctx
 import requests
 import dash_daq as daq
+import pandas as pd
+import joblib
+import os
+from db.db import SessionLocal
+from models.models import Prediccion
 
 # App initialization
 app = dash.Dash(
@@ -21,6 +26,14 @@ def calcular_imc(peso, altura_cm):
         return round(peso / (altura_m ** 2), 2)
     except:
         return None
+
+# Cargar modelo y parámetros
+BASE_PATH = os.path.dirname(os.path.dirname(__file__))
+MODELS_PATH = os.path.join(BASE_PATH, "models_pkl")
+modelo_lda = joblib.load(os.path.join(MODELS_PATH, "modelo_predictor_enfermedad_cardiaca.pkl"))
+info_modelo = joblib.load(os.path.join(MODELS_PATH, "info_modelo_cardiaco.pkl"))
+umbral_optimo = info_modelo["umbral_optimo"]
+variables_modelo = info_modelo["variables"]
 
 # Layout
 app.layout = html.Div([
@@ -163,7 +176,7 @@ def validar_habitos(alcohol, fruta, verduras, papas):
 # Resultado de predicción
 @app.callback(
     Output("resultado", "children"),
-    Output("datos-para-enviar", "children"),  # Nuevo Output para mostrar los datos
+    Output("datos-para-enviar", "children"),
     Input("submit-button", "n_clicks"),
     State("altura", "value"),
     State("peso", "value"),
@@ -181,54 +194,85 @@ def validar_habitos(alcohol, fruta, verduras, papas):
     State("cancer", "value"),
     State("depresion", "value"),
     State("diabetes", "value"),
-    State("artritis", "value")
+    State("artritis", "value"),
 )
-def predecir(n_clicks, altura, peso, imc, sexo, edad,
-             alcohol, fruta, verduras, papas, salud_general, chequeo,
-             ejercicio, piel, cancer, depresion, diabetes, artritis):
-
+def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, verduras, papas,
+                     salud_general, chequeo, ejercicio, piel, cancer, depresion, diabetes, artritis):
+    if not n_clicks:
+        return "", ""
+    campos = [altura, peso, imc, sexo, edad, alcohol, fruta, verduras, papas,
+              salud_general, chequeo, ejercicio, piel, cancer, depresion, diabetes, artritis]
+    if any(x is None for x in campos):
+        return html.Div("Por favor, completa todos los campos antes de evaluar."), ""
+    # Procesar datos
     datos = {
-        "height": altura,
-        "weight": peso,
+        "Height_(cm)": altura,
+        "Weight_(kg)": peso,
         "BMI": imc,
-        "Sex": sexo,
-        "Age": edad,
-        "AlcoholDrinking": alcohol,
-        "Fruit": fruta,
-        "GreenVeggies": verduras,
-        "FriedPotato": papas,
-        "GeneralHealth": salud_general,
+        "Alcohol_Consumption": alcohol,
+        "Fruit_Consumption": fruta,
+        "Green_Vegetables_Consumption": verduras,
+        "FriedPotato_Consumption": papas,
+        "General_Health": salud_general,
         "Checkup": chequeo,
-        "PhysicalActivity": ejercicio,
-        "SkinCancer": piel,
-        "OtherCancer": cancer,
+        "Exercise": ejercicio,
+        "Skin_Cancer": piel,
+        "Other_Cancer": cancer,
         "Depression": depresion,
         "Diabetes": diabetes,
-        "Arthritis": artritis
+        "Arthritis": artritis,
+        "Sex": sexo,
+        "Smoking_History": 0,
+        "Age_Category": str(edad)
     }
-
-    if n_clicks > 0:
-        try:
-            response = requests.post("http://127.0.0.1:8000/predecir", json=datos)
-            result = response.json()
-            resultado_div = html.Div([
-                html.H3("Resultado del Estudio:"),
-                html.P(f"Probabilidad: {round(result['probabilidad'] * 100)}%"),
-                html.P(f"Riesgo estimado: {result['riesgo']}"),
-                html.P(result['mensaje']),
-                # Placeholder para gráficas
-                html.Div(id="graficas-analisis", children=[
-                    html.H4("Gráficas e Indicadores relacionados (próximamente)"),
-                ])
-            ])
-            datos_div = html.Pre(str(datos))  # Mostrar los datos aquí
-            return resultado_div, datos_div
-        except Exception:
-            error_div = html.Div("Error de conexión con el servidor.", style={"color": "red"})
-            datos_div = html.Pre(str(datos)) # Mostrar los datos incluso en caso de error
-            return error_div, datos_div
-    return "", "" # Retorna vacío si el botón no ha sido clickeado aún
-
+    df = pd.DataFrame([datos])
+    df_age_cat = pd.get_dummies(df["Age_Category"], prefix="Age_Category")
+    df = df.drop(["Age_Category"], axis=1)
+    X_nuevo = pd.concat([df, df_age_cat], axis=1)
+    for col in variables_modelo:
+        if col not in X_nuevo.columns:
+            X_nuevo[col] = 0
+    X_nuevo = X_nuevo[variables_modelo]
+    proba = modelo_lda.predict_proba(X_nuevo)[:, 1][0]
+    prediccion = int(proba > umbral_optimo)
+    if prediccion == 1:
+        mensaje = "⚠️ Riesgo elevado de enfermedad cardíaca. Consulte a su médico de cabecera para derivación a Cardiología."
+    else:
+        mensaje = "✅ Bajo riesgo de enfermedad cardíaca. Mantenga sus controles médicos regulares."
+    # Guardar en base de datos
+    db = SessionLocal()
+    registro = Prediccion(
+        altura=altura,
+        peso=peso,
+        imc=imc,
+        consumo_alcohol=alcohol,
+        consumo_fruta=fruta,
+        consumo_vegetales=verduras,
+        consumo_papas=papas,
+        salud_general=salud_general,
+        chequeo_medico=chequeo,
+        ejercicio=ejercicio,
+        cancer_piel=piel,
+        otro_cancer=cancer,
+        depresion=depresion,
+        diabetes=diabetes,
+        artritis=artritis,
+        sexo=sexo,
+        historial_tabaquismo=0,
+        edad=str(edad),
+        resultado=prediccion,
+        probabilidad=proba
+    )
+    db.add(registro)
+    db.commit()
+    db.close()
+    # Mostrar resultado
+    return html.Div([
+        html.H2("Resultado:"),
+        html.P(f"Probabilidad de enfermedad cardíaca: {round(proba*100)}%"),
+        html.P(f"Riesgo: {'Alto' if prediccion == 1 else 'Bajo'}"),
+        html.P(mensaje)
+    ]), ""
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8050)
+    app.run(debug=True)
