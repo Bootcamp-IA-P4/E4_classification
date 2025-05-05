@@ -18,6 +18,7 @@ app = FastAPI(
     version="1.1"  # Incrementé la versión ya que hay cambios
 )
 
+# Clase para validar los datos de entrada
 class DatosPaciente(BaseModel):
     edad: int = Field(..., ge=0, description="Edad del paciente en años")
     sexo: int = Field(..., ge=0, le=1, description="Sexo del paciente (0: Masculino, 1: Femenino)")
