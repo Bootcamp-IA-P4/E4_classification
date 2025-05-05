@@ -1,8 +1,13 @@
-from sqlalchemy import Column, Integer, Float, String, DateTime
-from sqlalchemy.sql import func
-from db.database import Base
+from sqlalchemy import Column, Float, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+import logging
+
+logger = logging.getLogger(__name__)
+
+Base = declarative_base()
 
 class PredictionRecord(Base):
+    """Modelo SQLAlchemy para almacenar predicciones"""
     __tablename__ = "predictions"
     
     id = Column(Integer, primary_key=True, index=True)
@@ -26,4 +31,6 @@ class PredictionRecord(Base):
     smoking_history = Column(Integer, nullable=False)
     prediction_result = Column(Integer, nullable=False)
     probability = Column(Float, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    def __repr__(self):
+        return f"<Prediction(id={self.id}, result={self.prediction_result})>"
