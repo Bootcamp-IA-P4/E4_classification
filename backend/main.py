@@ -1,24 +1,57 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from core.config import settings
 from core.terminal_interface import TerminalInterface
 import joblib
 from pathlib import Path
 import sys
+import logging
+from db.database import db_config
+from db.models import Base
 
-app = FastAPI(title=settings.PROJECT_NAME)
+# Configuración básica de logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        # Inicializar base de datos
+        db_config.initialize()
+        Base.metadata.create_all(bind=db_config.engine)
+        logger.info("✅ Base de datos inicializada correctamente")
+        
+        # Cargar modelo
+        global model
+        MODEL_PATH = Path(__file__).parent / settings.MODEL_PATH
+        model = joblib.load(MODEL_PATH)
+        logger.info(f"✅ Modelo cargado desde: {MODEL_PATH}")
+        
+        yield  # Application runs here
+
+    except Exception as e:
+        logger.error(f"❌ Error durante el startup: {str(e)}")
+        raise
+
+# Pass the lifespan handler to FastAPI
+app = FastAPI(title=settings.PROJECT_NAME, lifespan=lifespan)
 
 # Configuración de rutas API
 from api.v1.routes.predict import router as predict_router
-app.include_router(predict_router, prefix="/api/v1")
-
-# Carga del modelo
-MODEL_PATH = Path(__file__).parent / settings.MODEL_PATH
-model = joblib.load(MODEL_PATH)
+app.include_router(predict_router, prefix=settings.API_V1_STR)
 
 def run_terminal_interface():
     """Ejecuta la interfaz de terminal"""
-    terminal = TerminalInterface(model)
-    terminal.run()
+    try:
+        terminal = TerminalInterface(model)
+        terminal.run()
+    except Exception as e:
+        logger.error(f"❌ Error en la interfaz de terminal: {str(e)}")
+        raise
 
 if __name__ == "__main__":
     # Si se ejecuta con --terminal o -t, inicia la interfaz de consola
@@ -27,4 +60,4 @@ if __name__ == "__main__":
     else:
         # Inicia el servidor FastAPI normalmente
         import uvicorn
-        uvicorn.run(app, host="0.0.0.0", port=8000)
+        uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
