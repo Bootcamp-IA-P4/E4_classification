@@ -5,12 +5,12 @@ from dotenv import load_dotenv
 import os
 from urllib.parse import quote_plus
 
-load_dotenv()
-print(f"DB_USER: {os.getenv('MYSQL_USER')}")
-print(f"DB_PASSWORD: {os.getenv('MYSQL_PASSWORD')}")
-print(f"DB_HOST: {os.getenv('MYSQL_HOST')}")
-print(f"DB_NAME: {os.getenv('MYSQL_DB')}")
-print(f"DB_PORT: {os.getenv('MYSQL_PORT')}")
+# load_dotenv()
+# print(f"DB_USER: {os.getenv('MYSQL_USER')}")
+# print(f"DB_PASSWORD: {os.getenv('MYSQL_PASSWORD')}")
+# print(f"DB_HOST: {os.getenv('MYSQL_HOST')}")
+# print(f"DB_NAME: {os.getenv('MYSQL_DB')}")
+# print(f"DB_PORT: {os.getenv('MYSQL_PORT')}")
 
 DB_USER = os.getenv("MYSQL_USER")
 DB_PASSWORD = os.getenv("MYSQL_PASSWORD")
