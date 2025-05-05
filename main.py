@@ -2,10 +2,15 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from db.db import init_db
+from db.db import SessionLocal
+from models.models import Prediccion
 import joblib
 import numpy as np
 import pandas as pd
 import os
+
+db = init_db()
 
 app = FastAPI()
 
@@ -102,6 +107,34 @@ async def predecir(
         mensaje = "⚠️ Riesgo elevado de enfermedad cardíaca. Consulte a su médico de cabecera para derivación a Cardiología."
     else:
         mensaje = "✅ Bajo riesgo de enfermedad cardíaca. Mantenga sus controles médicos regulares."
+
+
+    db = SessionLocal()
+    registro = Prediccion(
+        altura=altura,
+        peso=peso,
+        imc=imc,
+        consumo_alcohol=consumo_alcohol,
+        consumo_fruta=consumo_fruta,
+        consumo_vegetales=consumo_vegetales,
+        consumo_papas=consumo_papas,
+        salud_general=salud_general,
+        chequeo_medico=chequeo_medico,
+        ejercicio=ejercicio,
+        cancer_piel=cancer_piel,
+        otro_cancer=otro_cancer,
+        depresion=depresion,
+        diabetes=diabetes,
+        artritis=artritis,
+        sexo=sexo,
+        historial_tabaquismo=historial_tabaquismo,
+        edad=edad,
+        resultado=prediccion,
+        probabilidad=proba
+    )
+    db.add(registro)
+    db.commit()
+    db.close()
 
     return {
         "probabilidad": round(float(proba), 3),
