@@ -64,41 +64,116 @@ app.layout = html.Div([
         ),
 
         html.Label("Edad"),
-        dcc.Input(id="edad", type="number", required=True),
+        dcc.Dropdown(
+            id="edad",
+            options=[
+                {"label": "18-24", "value": "18-24"},
+                {"label": "25-29", "value": "25-29"},
+                {"label": "30-34", "value": "30-34"},
+                {"label": "35-39", "value": "35-39"},
+                {"label": "40-44", "value": "40-44"},
+                {"label": "45-49", "value": "45-49"},
+                {"label": "50-54", "value": "50-54"},
+                {"label": "55-59", "value": "55-59"},
+                {"label": "60-64", "value": "60-64"},
+                {"label": "65-69", "value": "65-69"},
+                {"label": "70-74", "value": "70-74"},
+                {"label": "75-79", "value": "75-79"},
+                {"label": "80+", "value": "80+"}
+            ],
+            placeholder="Selecciona edad"
+        ),
 
         html.Button("Siguiente", id="next-1", n_clicks=0),
-    ], style={"display": "block"}),  # Inicia con el primer bloque visible
+    ], style={"display": "block"}),
 
     html.Div(id="bloque-habitos", className="formulario-bloque bloque", children=[
         html.Label("Historial de tabaquismo"),
-        dcc.Dropdown(id="tabaquismo", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+        dcc.Dropdown(
+            id="tabaquismo",
+            options=[
+                {"label": "Sí", "value": 1},
+                {"label": "No", "value": 0}
+            ],
+            placeholder="Selecciona"
+        ),
 
-        html.Label("Consumo de alcohol (veces/semana)"),
-        dcc.Input(id="alcohol", type="number"),
+        html.Label("Consumo de alcohol (frecuencia)"),
+        dcc.Dropdown(
+            id="alcohol",
+            options=[
+                {"label": "Ninguna", "value": 0},
+                {"label": "Ocasional (1/semana)", "value": 1},
+                {"label": "1 vez al día", "value": 7},
+                {"label": "2 veces al día", "value": 14},
+                {"label": "3 veces al día", "value": 21},
+                {"label": "4-5 veces al día", "value": 30}
+            ],
+            placeholder="Selecciona"
+        ),
 
-        html.Label("Consumo de fruta (porciones/semana)"),
-        dcc.Input(id="fruta", type="number"),
+        html.Label("Consumo de fruta (porciones/día)"),
+        dcc.Dropdown(
+            id="fruta",
+            options=[
+                {"label": str(i), "value": i} for i in [0, 1, 2, 3, 4, 9, 13, 17, 18]
+            ],
+            placeholder="Selecciona"
+        ),
 
-        html.Label("Consumo de vegetales verdes (porciones/semana)"),
-        dcc.Input(id="verduras", type="number"),
+        html.Label("Consumo de vegetales verdes (porciones/día)"),
+        dcc.Dropdown(
+            id="verduras",
+            options=[
+                {"label": str(i), "value": i} for i in [0, 1, 2, 3, 4, 9, 13, 17, 18]
+            ],
+            placeholder="Selecciona"
+        ),
 
         html.Button("Atrás", id="back-2", n_clicks=0),
         html.Button("Siguiente", id="next-2", n_clicks=0),
-    ], style={"display": "none"}),  # Inicialmente oculto
+    ], style={"display": "none"}),
 
     html.Div(id="bloque-medico", className="formulario-bloque bloque", children=[
-        html.Label("Salud general (1-5)"),
-        dcc.Slider(id="salud_general", min=1, max=5, step=1, marks={i: str(i) for i in range(1, 6)}),
+        html.Label("Salud general"),
+        dcc.Dropdown(
+            id="salud_general",
+            options=[
+                {"label": "Mala", "value": 0},
+                {"label": "Regular", "value": 1},
+                {"label": "Buena", "value": 2},
+                {"label": "Muy buena", "value": 3},
+                {"label": "Excelente", "value": 4}
+            ],
+            placeholder="Selecciona"
+        ),
 
-        html.Label("Chequeo médico reciente"),
-        dcc.Dropdown(id="chequeo", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+        html.Label("Chequeo médico"),
+        dcc.Dropdown(
+            id="chequeo",
+            options=[
+                {"label": "Nunca", "value": 0},
+                {"label": "Hace 5 años o más", "value": 1},
+                {"label": "En los últimos 5 años", "value": 2},
+                {"label": "En los últimos 2 años", "value": 3},
+                {"label": "En el último año", "value": 4}
+            ],
+            placeholder="Selecciona"
+        ),
 
         html.Label("Ejercicio"),
-        dcc.Dropdown(id="ejercicio", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+        dcc.Dropdown(
+            id="ejercicio",
+            options=[
+                {"label": "Sí", "value": 1},
+                {"label": "No", "value": 0}
+            ],
+            placeholder="Selecciona"
+        ),
 
         html.Button("Atrás", id="back-3", n_clicks=0),
         html.Button("Evaluar Riesgo", id="submit-button", n_clicks=0),
-    ], style={"display": "none"}),  # Inicialmente oculto
+    ], style={"display": "none"}),
 
     html.Div(id="resultado", className="resultado", style={"display": "none"}),
 
@@ -116,22 +191,44 @@ app.layout = html.Div([
     Input("back-2", "n_clicks"),
     Input("back-3", "n_clicks"),
     Input("submit-button", "n_clicks"),
-    State("current_step", "data")
+    State("altura", "value"),
+    State("peso", "value"),
+    State("imc", "value"),
+    State("sexo", "value"),
+    State("edad", "value"),
+    State("tabaquismo", "value"),
+    State("alcohol", "value"),
+    State("fruta", "value"),
+    State("verduras", "value"),
+    State("salud_general", "value"),
+    State("chequeo", "value"),
+    State("ejercicio", "value"),
 )
-def actualizar_pasos(n1, n2, b2, b3, submit, paso):
+def actualizar_pasos(n1, n2, b2, b3, submit,
+                     altura, peso, imc, sexo, edad,
+                     tabaquismo, alcohol, fruta, verduras,
+                     salud_general, chequeo, ejercicio):
     triggered_id = ctx.triggered_id
 
+    # Validación para avanzar del primer bloque
     if triggered_id == "next-1":
+        if None in [altura, peso, imc, sexo, edad]:
+            return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
         return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
+
+    # Validación para avanzar del segundo bloque
     elif triggered_id == "next-2":
+        if None in [tabaquismo, alcohol, fruta, verduras]:
+            return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
         return {"display": "none"}, {"display": "none"}, {"display": "block"}, {"display": "none"}
+
     elif triggered_id == "back-2":
         return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
     elif triggered_id == "back-3":
         return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
     elif triggered_id == "submit-button":
         return {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "block"}
-    
+
     return dash.no_update
 
 if __name__ == "__main__":
