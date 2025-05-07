@@ -1,6 +1,7 @@
 import os
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base  # Añade declarative_base
+from sqlalchemy.ext.declarative import declarative_base
 from urllib.parse import quote_plus
 from pathlib import Path
 from dotenv import load_dotenv
@@ -8,6 +9,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 DB_DRIVER = "pymysql"
+
+# Define Base aquí mismo
+Base = declarative_base()
 
 class DatabaseConfig:
     _instance = None
@@ -84,7 +88,10 @@ class DatabaseConfig:
 db_config = DatabaseConfig()
 db_config.initialize()
 
-# Comprobamos la BDD
+# Asegúrate de exportar Base
+__all__ = ['Base', 'db_config']
+
+# Debug
 print("\n=== Verificación de inicialización de la DB ===")
 print(f"¿SessionLocal existe?: {hasattr(db_config, 'SessionLocal')}")
 print(f"¿SessionLocal es callable?: {callable(getattr(db_config, 'SessionLocal', None))}")

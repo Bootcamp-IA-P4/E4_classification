@@ -1,0 +1,70 @@
+# Mapeo de español a inglés (para el procesamiento)
+MAPEO_ES_EN = {
+    "altura": "height",
+    "peso": "weight",
+    "imc": "bmi",
+    "salud_general": "general_health",
+    "edad": "age_category",
+    "consumo_alcohol": "alcohol_consumption",
+    "consumo_fruta": "fruit_consumption",
+    "consumo_vegetales": "green_vegetables_consumption",
+    "consumo_papas": "fried_potato_consumption",
+    "chequeo_medico": "checkup",
+    "ejercicio": "exercise",
+    "cancer_piel": "skin_cancer",
+    "otro_cancer": "other_cancer",
+    "depresion": "depression",
+    "diabetes": "diabetes",
+    "artritis": "arthritis",
+    "sexo": "sex",
+    "historial_tabaquismo": "smoking_history",
+    "resultado": "prediction_result",
+    "probabilidad": "probability"
+}
+
+# Mapeo de inglés a nombres de columnas BD (como están en tu tabla)
+MAPEO_EN_BDD = {
+    "height": "height",
+    "weight": "weight",
+    "bmi": "bmi",
+    "general_health": "general_health",
+    "age_category": "age_category",
+    "alcohol_consumption": "alcohol_consumption",
+    "fruit_consumption": "fruit_consumption",
+    "green_vegetables_consumption": "green_vegetables_consumption",
+    "fried_potato_consumption": "fried_potato_consumption",
+    "checkup": "checkup",
+    "exercise": "exercise",
+    "skin_cancer": "skin_cancer",
+    "other_cancer": "other_cancer",
+    "depression": "depression",
+    "diabetes": "diabetes",
+    "arthritis": "arthritis",
+    "sex": "sex",
+    "smoking_history": "smoking_history",
+    "prediction_result": "prediction_result",
+    "probability": "probability"
+}
+
+SPANISH_TO_ENGLISH = {
+    "altura": "height",
+    "peso": "weight",
+    "imc": "bmi",
+    "salud_general": "general_health",
+    "edad": "age_category",
+    "consumo_alcohol": "alcohol_consumption",
+    "consumo_fruta": "fruit_consumption",
+    "consumo_vegetales": "green_vegetables_consumption",
+    "consumo_papas": "fried_potato_consumption",
+    "chequeo_medico": "checkup",
+    "ejercicio": "exercise",
+    "cancer_piel": "skin_cancer",
+    "otro_cancer": "other_cancer",
+    "depresion": "depression",
+    "diabetes": "diabetes",
+    "artritis": "arthritis",
+    "sexo": "sex",
+    "historial_tabaquismo": "smoking_history",
+    "resultado": "prediction_result",
+    "probabilidad": "probability"
+}
