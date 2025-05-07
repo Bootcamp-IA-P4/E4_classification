@@ -34,14 +34,12 @@ variables_modelo = info_modelo["variables"]
 
 # Layout con bloques separados
 app.layout = html.Div([
-
-    # Video de fondo
     html.Video(src='/assets/fondo_corazon.mp4', autoPlay=True, loop=True, muted=True,
                className="video-background"),
 
     html.Div("HeartWise", className="navbar"),
 
-    dcc.Store(id="current_step", data=0),  # Control de pasos
+    dcc.Store(id="current_step", data=0),
 
     html.Div(id="bloque-general", className="formulario-bloque bloque", children=[
         html.Label("Altura (cm)"),
@@ -54,20 +52,16 @@ app.layout = html.Div([
         dcc.Input(id="imc", type="number", required=True, debounce=True),
 
         html.Label("Sexo"),
-        dcc.Dropdown(
-            id="sexo",
-            options=[
-                {"label": "Masculino", "value": 0},
-                {"label": "Femenino", "value": 1}
-            ],
-            placeholder="Selecciona sexo"
-        ),
+        dcc.Dropdown(id="sexo", options=[
+            {"label": "Masculino", "value": 0},
+            {"label": "Femenino", "value": 1}
+        ], placeholder="Selecciona sexo"),
 
         html.Label("Edad"),
         dcc.Input(id="edad", type="number", required=True),
 
         html.Button("Siguiente", id="next-1", n_clicks=0),
-    ], style={"display": "block"}),  # Inicia con el primer bloque visible
+    ], style={"display": "block"}),
 
     html.Div(id="bloque-habitos", className="formulario-bloque bloque", children=[
         html.Label("Historial de tabaquismo"),
@@ -84,7 +78,7 @@ app.layout = html.Div([
 
         html.Button("Atrás", id="back-2", n_clicks=0),
         html.Button("Siguiente", id="next-2", n_clicks=0),
-    ], style={"display": "none"}),  # Inicialmente oculto
+    ], style={"display": "none"}),
 
     html.Div(id="bloque-medico", className="formulario-bloque bloque", children=[
         html.Label("Salud general (1-5)"),
@@ -98,14 +92,25 @@ app.layout = html.Div([
 
         html.Button("Atrás", id="back-3", n_clicks=0),
         html.Button("Evaluar Riesgo", id="submit-button", n_clicks=0),
-    ], style={"display": "none"}),  # Inicialmente oculto
+    ], style={"display": "none"}),
 
     html.Div(id="resultado", className="resultado", style={"display": "none"}),
 
     html.Div("© 2025 HeartWise", className="footer")
 ])
 
-# Callback para mostrar cada bloque según el paso actual
+# Callback para calcular IMC
+@app.callback(
+    Output("imc", "value"),
+    Input("peso", "value"),
+    Input("altura", "value")
+)
+def actualizar_imc(peso, altura):
+    if peso and altura:
+        return calcular_imc(peso, altura)
+    return dash.no_update
+
+# Callback para gestionar los bloques
 @app.callback(
     Output("bloque-general", "style"),
     Output("bloque-habitos", "style"),
@@ -115,10 +120,9 @@ app.layout = html.Div([
     Input("next-2", "n_clicks"),
     Input("back-2", "n_clicks"),
     Input("back-3", "n_clicks"),
-    Input("submit-button", "n_clicks"),
-    State("current_step", "data")
+    Input("submit-button", "n_clicks")
 )
-def actualizar_pasos(n1, n2, b2, b3, submit, paso):
+def actualizar_pasos(n1, n2, b2, b3, submit):
     triggered_id = ctx.triggered_id
 
     if triggered_id == "next-1":
@@ -132,6 +136,34 @@ def actualizar_pasos(n1, n2, b2, b3, submit, paso):
     elif triggered_id == "submit-button":
         return {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "block"}
     
+    return dash.no_update
+
+# Callback para calcular riesgo cardiaco
+@app.callback(
+    Output("resultado", "children"),
+    Input("submit-button", "n_clicks"),
+    State("sexo", "value"),
+    State("edad", "value"),
+    State("imc", "value"),
+    State("tabaquismo", "value"),
+    State("alcohol", "value"),
+    State("fruta", "value"),
+    State("verduras", "value"),
+    State("salud_general", "value"),
+    State("chequeo", "value"),
+    State("ejercicio", "value")
+)
+def evaluar_riesgo(n_clicks, *args):
+    if n_clicks > 0:
+        prediccion = modelo_lda.predict_proba([args])[0][1]
+        riesgo = "Alto" if prediccion >= umbral_optimo else "Bajo"
+        
+        return html.Div([
+            html.H3("Resultados"),
+            html.P(f"Probabilidad: {prediccion:.2%}"),
+            html.P(f"Riesgo: {riesgo}"),
+            html.Button("Volver", id="reset", n_clicks=0)
+        ])
     return dash.no_update
 
 if __name__ == "__main__":

@@ -5,17 +5,29 @@ body {
     color: #e0e0e0;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    /* overflow: hidden; */
+    overflow-x: hidden;
+    overflow-y: auto;
 }
+
+input, select {
+    background-color: #2c2c2c;
+    color: #ffffff;
+    border: 1px solid #444;
+    padding: 10px;
+    border-radius: 5px;
+}
+
 
 /* Video background */
 .video-background {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    object-fit: cover;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 70vw;
+    height: 80vh;
+    object-fit: contain;
     z-index: -1;
 }
 
@@ -44,6 +56,7 @@ body {
 /* Bloques de formulario */
 .bloque {
     width: 50%;
+    max-width: 100%;
     margin: auto;
     padding: 20px;
     border-radius: 10px;
@@ -61,6 +74,6 @@ body {
 }
 
 @keyframes latidos {
-    0% { background-color: #ff4444; }
-    100% { background-color: #ff8888; }
+    0% { background-color: #ff4444; transform: scale(1); }
+    100% { background-color: #ff8888; transform: scale(1.05); }
 }
