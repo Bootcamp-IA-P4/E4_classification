@@ -15,7 +15,6 @@ class PredictionInput(BaseModel):
     peso: float
     imc: float
     salud_general: GeneralHealthOptions
-    edad: AgeCategoryOptions
     consumo_alcohol: float
     consumo_fruta: float
     consumo_vegetales: float
@@ -29,6 +28,7 @@ class PredictionInput(BaseModel):
     artritis: int
     sexo: int
     historial_tabaquismo: int
+    edad: AgeCategoryOptions
 
     def to_english_dict(self):
         """Convierte los nombres a inglés para el modelo"""
