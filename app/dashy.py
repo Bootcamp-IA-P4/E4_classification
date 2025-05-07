@@ -363,22 +363,44 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, v
     Input("back-2", "n_clicks"),
     Input("back-3", "n_clicks"),
     Input("submit-button", "n_clicks"),
-    State("current_step", "data")
+    State("altura", "value"),
+    State("peso", "value"),
+    State("imc", "value"),
+    State("sexo", "value"),
+    State("edad", "value"),
+    State("tabaquismo", "value"),
+    State("alcohol", "value"),
+    State("fruta", "value"),
+    State("verduras", "value"),
+    State("salud_general", "value"),
+    State("chequeo", "value"),
+    State("ejercicio", "value"),
 )
-def actualizar_pasos(n1, n2, b2, b3, submit, paso):
+def actualizar_pasos(n1, n2, b2, b3, submit,
+                     altura, peso, imc, sexo, edad,
+                     tabaquismo, alcohol, fruta, verduras,
+                     salud_general, chequeo, ejercicio):
     triggered_id = ctx.triggered_id
 
+    # Validación para avanzar del primer bloque
     if triggered_id == "next-1":
+        if None in [altura, peso, imc, sexo, edad]:
+            return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
         return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
+
+    # Validación para avanzar del segundo bloque
     elif triggered_id == "next-2":
+        if None in [tabaquismo, alcohol, fruta, verduras]:
+            return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
         return {"display": "none"}, {"display": "none"}, {"display": "block"}, {"display": "none"}
+
     elif triggered_id == "back-2":
         return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
     elif triggered_id == "back-3":
         return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
     elif triggered_id == "submit-button":
         return {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "block"}
-    
+
     return dash.no_update
 
 if __name__ == "__main__":
