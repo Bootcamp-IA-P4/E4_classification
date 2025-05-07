@@ -24,6 +24,18 @@ def calcular_imc(peso, altura_cm):
     except:
         return None
 
+@app.callback(
+    Output("imc", "value"),
+    Input("altura", "value"),
+    Input("peso", "value"),
+    prevent_initial_call=True
+)
+def actualizar_imc(altura, peso):
+    if altura and peso and altura > 0:  # Añadida validación para evitar división por cero
+        altura_m = altura / 100  # Convertir cm a metros
+        return round(peso / (altura_m ** 2), 2)
+    return None
+
 # Cargar modelo y parámetros
 BASE_PATH = os.path.dirname(os.path.dirname(__file__))
 MODELS_PATH = os.path.join(BASE_PATH, "models_pkl")
@@ -52,43 +64,122 @@ app.layout = html.Div([
         dcc.Input(id="imc", type="number", required=True, debounce=True),
 
         html.Label("Sexo"),
-        dcc.Dropdown(id="sexo", options=[
-            {"label": "Masculino", "value": 0},
-            {"label": "Femenino", "value": 1}
-        ], placeholder="Selecciona sexo"),
+        dcc.Dropdown(
+            id="sexo",
+            options=[
+                {"label": "Masculino", "value": 0},
+                {"label": "Femenino", "value": 1}
+            ],
+            placeholder="Selecciona sexo"
+        ),
 
         html.Label("Edad"),
-        dcc.Input(id="edad", type="number", required=True),
+        dcc.Dropdown(
+            id="edad",
+            options=[
+                {"label": "18-24", "value": "18-24"},
+                {"label": "25-29", "value": "25-29"},
+                {"label": "30-34", "value": "30-34"},
+                {"label": "35-39", "value": "35-39"},
+                {"label": "40-44", "value": "40-44"},
+                {"label": "45-49", "value": "45-49"},
+                {"label": "50-54", "value": "50-54"},
+                {"label": "55-59", "value": "55-59"},
+                {"label": "60-64", "value": "60-64"},
+                {"label": "65-69", "value": "65-69"},
+                {"label": "70-74", "value": "70-74"},
+                {"label": "75-79", "value": "75-79"},
+                {"label": "80+", "value": "80+"}
+            ],
+            placeholder="Selecciona edad"
+        ),
 
         html.Button("Siguiente", id="next-1", n_clicks=0),
     ], style={"display": "block"}),
 
     html.Div(id="bloque-habitos", className="formulario-bloque bloque", children=[
         html.Label("Historial de tabaquismo"),
-        dcc.Dropdown(id="tabaquismo", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+        dcc.Dropdown(
+            id="tabaquismo",
+            options=[
+                {"label": "Sí", "value": 1},
+                {"label": "No", "value": 0}
+            ],
+            placeholder="Selecciona"
+        ),
 
-        html.Label("Consumo de alcohol (veces/semana)"),
-        dcc.Input(id="alcohol", type="number"),
+        html.Label("Consumo de alcohol (frecuencia)"),
+        dcc.Dropdown(
+            id="alcohol",
+            options=[
+                {"label": "Ninguna", "value": 0},
+                {"label": "Ocasional (1/semana)", "value": 1},
+                {"label": "1 vez al día", "value": 7},
+                {"label": "2 veces al día", "value": 14},
+                {"label": "3 veces al día", "value": 21},
+                {"label": "4-5 veces al día", "value": 30}
+            ],
+            placeholder="Selecciona"
+        ),
 
-        html.Label("Consumo de fruta (porciones/semana)"),
-        dcc.Input(id="fruta", type="number"),
+        html.Label("Consumo de fruta (porciones/día)"),
+        dcc.Dropdown(
+            id="fruta",
+            options=[
+                {"label": str(i), "value": i} for i in [0, 1, 2, 3, 4, 9, 13, 17, 18]
+            ],
+            placeholder="Selecciona"
+        ),
 
-        html.Label("Consumo de vegetales verdes (porciones/semana)"),
-        dcc.Input(id="verduras", type="number"),
+        html.Label("Consumo de vegetales verdes (porciones/día)"),
+        dcc.Dropdown(
+            id="verduras",
+            options=[
+                {"label": str(i), "value": i} for i in [0, 1, 2, 3, 4, 9, 13, 17, 18]
+            ],
+            placeholder="Selecciona"
+        ),
 
         html.Button("Atrás", id="back-2", n_clicks=0),
         html.Button("Siguiente", id="next-2", n_clicks=0),
     ], style={"display": "none"}),
 
     html.Div(id="bloque-medico", className="formulario-bloque bloque", children=[
-        html.Label("Salud general (1-5)"),
-        dcc.Slider(id="salud_general", min=1, max=5, step=1, marks={i: str(i) for i in range(1, 6)}),
+        html.Label("Salud general"),
+        dcc.Dropdown(
+            id="salud_general",
+            options=[
+                {"label": "Mala", "value": 0},
+                {"label": "Regular", "value": 1},
+                {"label": "Buena", "value": 2},
+                {"label": "Muy buena", "value": 3},
+                {"label": "Excelente", "value": 4}
+            ],
+            placeholder="Selecciona"
+        ),
 
-        html.Label("Chequeo médico reciente"),
-        dcc.Dropdown(id="chequeo", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+        html.Label("Chequeo médico"),
+        dcc.Dropdown(
+            id="chequeo",
+            options=[
+                {"label": "Nunca", "value": 0},
+                {"label": "Hace 5 años o más", "value": 1},
+                {"label": "En los últimos 5 años", "value": 2},
+                {"label": "En los últimos 2 años", "value": 3},
+                {"label": "En el último año", "value": 4}
+            ],
+            placeholder="Selecciona"
+        ),
 
         html.Label("Ejercicio"),
-        dcc.Dropdown(id="ejercicio", options=[{"label": str(i), "value": i} for i in [0, 1]]),
+        dcc.Dropdown(
+            id="ejercicio",
+            options=[
+                {"label": "Sí", "value": 1},
+                {"label": "No", "value": 0}
+            ],
+            placeholder="Selecciona"
+        ),
 
         html.Button("Atrás", id="back-3", n_clicks=0),
         html.Button("Evaluar Riesgo", id="submit-button", n_clicks=0),
@@ -121,50 +212,111 @@ def actualizar_imc(peso, altura):
     Input("back-2", "n_clicks"),
     Input("back-3", "n_clicks"),
     Input("submit-button", "n_clicks")
-)
-def actualizar_pasos(n1, n2, b2, b3, submit):
-    triggered_id = ctx.triggered_id
-
-    if triggered_id == "next-1":
-        return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
-    elif triggered_id == "next-2":
-        return {"display": "none"}, {"display": "none"}, {"display": "block"}, {"display": "none"}
-    elif triggered_id == "back-2":
-        return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
-    elif triggered_id == "back-3":
-        return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
-    elif triggered_id == "submit-button":
-        return {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "block"}
-    
-    return dash.no_update
-
-# Callback para calcular riesgo cardiaco
-@app.callback(
-    Output("resultado", "children"),
     Input("submit-button", "n_clicks"),
+    State("altura", "value"),
+    State("peso", "value"),
+    State("imc", "value"),
     State("sexo", "value"),
     State("edad", "value"),
-    State("imc", "value"),
     State("tabaquismo", "value"),
     State("alcohol", "value"),
     State("fruta", "value"),
     State("verduras", "value"),
     State("salud_general", "value"),
     State("chequeo", "value"),
-    State("ejercicio", "value")
+    State("ejercicio", "value"),
 )
-def evaluar_riesgo(n_clicks, *args):
-    if n_clicks > 0:
-        prediccion = modelo_lda.predict_proba([args])[0][1]
-        riesgo = "Alto" if prediccion >= umbral_optimo else "Bajo"
-        
-        return html.Div([
-            html.H3("Resultados"),
-            html.P(f"Probabilidad: {prediccion:.2%}"),
-            html.P(f"Riesgo: {riesgo}"),
-            html.Button("Volver", id="reset", n_clicks=0)
-        ])
-    return dash.no_update
+def actualizar_pasos(n1, n2, b2, b3, submit,
+                     altura, peso, imc, sexo, edad,
+                     tabaquismo, alcohol, fruta, verduras,
+                     salud_general, chequeo, ejercicio):
+    # Manejo robusto del trigger
+    triggered_id = ctx.triggered_id if ctx.triggered_id is not None else ""
+
+    # Validación para avanzar del primer bloque
+    if triggered_id == "next-1":
+        if None in [altura, peso, imc, sexo, edad]:
+            return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
+        return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
+
+    # Validación para avanzar del segundo bloque
+    elif triggered_id == "next-2":
+        if None in [tabaquismo, alcohol, fruta, verduras]:
+            return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
+        return {"display": "none"}, {"display": "none"}, {"display": "block"}, {"display": "none"}
+
+    elif triggered_id == "back-2":
+        return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
+    elif triggered_id == "back-3":
+        return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
+    elif triggered_id == "submit-button":
+        return {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "block"}
+
+    # Por defecto, mostrar solo el primer bloque
+    return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
+
+@app.callback(
+    Output("resultado", "children"),
+    Input("submit-button", "n_clicks"),
+    State("altura", "value"),
+    State("peso", "value"),
+    State("imc", "value"),
+    State("sexo", "value"),
+    State("edad", "value"),
+    State("tabaquismo", "value"),
+    State("alcohol", "value"),
+    State("fruta", "value"),
+    State("verduras", "value"),
+    State("salud_general", "value"),
+    State("chequeo", "value"),
+    State("ejercicio", "value"),
+    prevent_initial_call=True
+)
+def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
+                      tabaquismo, alcohol, fruta, verduras,
+                      salud_general, chequeo, ejercicio):
+    if None in [altura, peso, imc, sexo, edad, tabaquismo, alcohol, fruta, verduras, salud_general, chequeo, ejercicio]:
+        return "Por favor, completa todos los campos antes de evaluar el riesgo."
+
+    import pandas as pd
+
+    # Prepara los datos igual que en tu modelo
+    datos = {
+        "Height_(cm)": altura,
+        "Weight_(kg)": peso,
+        "BMI": imc,
+        "Alcohol_Consumption": alcohol,
+        "Fruit_Consumption": fruta * 7,
+        "Green_Vegetables_Consumption": verduras * 7,
+        "FriedPotato_Consumption": 0,  # Si no tienes este campo, pon 0
+        "General_Health": salud_general,
+        "Checkup": chequeo,
+        "Exercise": ejercicio,
+        "Skin_Cancer": 0,
+        "Other_Cancer": 0,
+        "Depression": 0,
+        "Diabetes": 0,
+        "Arthritis": 0,
+        "Sex": sexo,
+        "Smoking_History": tabaquismo,
+        "Age_Category": edad
+    }
+    df = pd.DataFrame([datos])
+    df_age_cat = pd.get_dummies(df["Age_Category"], prefix="Age_Category")
+    df = df.drop(["Age_Category"], axis=1)
+    X_nuevo = pd.concat([df, df_age_cat], axis=1)
+    for col in variables_modelo:
+        if col not in X_nuevo.columns:
+            X_nuevo[col] = 0
+    X_nuevo = X_nuevo[variables_modelo]
+
+    prob = modelo_lda.predict_proba(X_nuevo)[0][1]
+    prediccion = int(prob > umbral_optimo)
+    if prediccion == 1:
+        mensaje = "⚠️ Riesgo elevado de enfermedad cardíaca. Consulte a su médico de cabecera para derivación a Cardiología."
+    else:
+        mensaje = "✅ Bajo riesgo de enfermedad cardíaca. Mantenga sus controles médicos regulares."
+    return f"{mensaje}<br>Probabilidad estimada: <b>{prob:.1%}</b>"
 
 if __name__ == "__main__":
     app.run(debug=True)
