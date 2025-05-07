@@ -352,5 +352,34 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, v
             error_msg += f"\nDetalles: {e.response.text}"
         return html.Div(error_msg, className="error-mensaje"), ""
 
+# Callback para mostrar cada bloque según el paso actual
+@app.callback(
+    Output("bloque-general", "style"),
+    Output("bloque-habitos", "style"),
+    Output("bloque-medico", "style"),
+    Output("resultado", "style"),
+    Input("next-1", "n_clicks"),
+    Input("next-2", "n_clicks"),
+    Input("back-2", "n_clicks"),
+    Input("back-3", "n_clicks"),
+    Input("submit-button", "n_clicks"),
+    State("current_step", "data")
+)
+def actualizar_pasos(n1, n2, b2, b3, submit, paso):
+    triggered_id = ctx.triggered_id
+
+    if triggered_id == "next-1":
+        return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
+    elif triggered_id == "next-2":
+        return {"display": "none"}, {"display": "none"}, {"display": "block"}, {"display": "none"}
+    elif triggered_id == "back-2":
+        return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
+    elif triggered_id == "back-3":
+        return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
+    elif triggered_id == "submit-button":
+        return {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "block"}
+    
+    return dash.no_update
+
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
