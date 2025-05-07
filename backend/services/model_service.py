@@ -26,7 +26,7 @@ async def make_prediction(input_data: PredictionInput):
         
         # 3. Preparar DataFrame para predicción
         df = pd.DataFrame([english_data])
-        
+        df.head()
         # One-hot encoding para Age_Category
         if "age_category" in df.columns:
             df_age_cat = pd.get_dummies(df["age_category"], prefix="Age_Category")
