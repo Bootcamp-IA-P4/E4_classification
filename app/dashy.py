@@ -380,7 +380,8 @@ def actualizar_pasos(n1, n2, b2, b3, submit,
                      altura, peso, imc, sexo, edad,
                      tabaquismo, alcohol, fruta, verduras,
                      salud_general, chequeo, ejercicio):
-    triggered_id = ctx.triggered_id
+    # Manejo robusto del trigger
+    triggered_id = ctx.triggered_id if ctx.triggered_id is not None else ""
 
     # Validación para avanzar del primer bloque
     if triggered_id == "next-1":
@@ -401,7 +402,71 @@ def actualizar_pasos(n1, n2, b2, b3, submit,
     elif triggered_id == "submit-button":
         return {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "block"}
 
-    return dash.no_update
+    # Por defecto, mostrar solo el primer bloque
+    return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
+
+@app.callback(
+    Output("resultado", "children"),
+    Input("submit-button", "n_clicks"),
+    State("altura", "value"),
+    State("peso", "value"),
+    State("imc", "value"),
+    State("sexo", "value"),
+    State("edad", "value"),
+    State("tabaquismo", "value"),
+    State("alcohol", "value"),
+    State("fruta", "value"),
+    State("verduras", "value"),
+    State("salud_general", "value"),
+    State("chequeo", "value"),
+    State("ejercicio", "value"),
+    prevent_initial_call=True
+)
+def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
+                      tabaquismo, alcohol, fruta, verduras,
+                      salud_general, chequeo, ejercicio):
+    if None in [altura, peso, imc, sexo, edad, tabaquismo, alcohol, fruta, verduras, salud_general, chequeo, ejercicio]:
+        return "Por favor, completa todos los campos antes de evaluar el riesgo."
+
+    import pandas as pd
+
+    # Prepara los datos igual que en tu modelo
+    datos = {
+        "Height_(cm)": altura,
+        "Weight_(kg)": peso,
+        "BMI": imc,
+        "Alcohol_Consumption": alcohol,
+        "Fruit_Consumption": fruta * 7,
+        "Green_Vegetables_Consumption": verduras * 7,
+        "FriedPotato_Consumption": 0,  # Si no tienes este campo, pon 0
+        "General_Health": salud_general,
+        "Checkup": chequeo,
+        "Exercise": ejercicio,
+        "Skin_Cancer": 0,
+        "Other_Cancer": 0,
+        "Depression": 0,
+        "Diabetes": 0,
+        "Arthritis": 0,
+        "Sex": sexo,
+        "Smoking_History": tabaquismo,
+        "Age_Category": edad
+    }
+    df = pd.DataFrame([datos])
+    df_age_cat = pd.get_dummies(df["Age_Category"], prefix="Age_Category")
+    df = df.drop(["Age_Category"], axis=1)
+    X_nuevo = pd.concat([df, df_age_cat], axis=1)
+    for col in variables_modelo:
+        if col not in X_nuevo.columns:
+            X_nuevo[col] = 0
+    X_nuevo = X_nuevo[variables_modelo]
+
+    prob = modelo_lda.predict_proba(X_nuevo)[0][1]
+    prediccion = int(prob > umbral_optimo)
+    if prediccion == 1:
+        mensaje = "⚠️ Riesgo elevado de enfermedad cardíaca. Consulte a su médico de cabecera para derivación a Cardiología."
+    else:
+        mensaje = "✅ Bajo riesgo de enfermedad cardíaca. Mantenga sus controles médicos regulares."
+    return f"{mensaje}<br>Probabilidad estimada: <b>{prob:.1%}</b>"
 
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
