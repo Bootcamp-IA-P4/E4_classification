@@ -1,0 +1,69 @@
+{
+    "features": {
+        "Height_(cm)": {
+            "description": "Altura en centímetros",
+            "type": "float",
+            "range": [100, 250]
+        },
+        "Weight_(kg)": {
+            "description": "Peso en kilogramos",
+            "type": "float",
+            "range": [30, 200]
+        },
+        "BMI": {
+            "description": "Índice de Masa Corporal",
+            "type": "float",
+            "range": [15, 50]
+        },
+        "General_Health": {
+            "description": "Salud general autopercibida",
+            "type": "categorical",
+            "values": {
+                "1": "Excelente",
+                "2": "Muy buena",
+                "3": "Buena",
+                "4": "Regular",
+                "5": "Mala"
+            }
+        },
+        "Age_Category": {
+            "description": "Grupo de edad",
+            "type": "categorical",
+            "values": {
+                "18-24": "18 a 24 años",
+                "25-29": "25 a 29 años",
+                "30-34": "30 a 34 años",
+                "35-39": "35 a 39 años",
+                "40-44": "40 a 44 años",
+                "45-49": "45 a 49 años",
+                "50-54": "50 a 54 años",
+                "55-59": "55 a 59 años",
+                "60-64": "60 a 64 años",
+                "65-69": "65 a 69 años",
+                "70-74": "70 a 74 años",
+                "75-79": "75 a 79 años",
+                "80+": "80 años o más"
+            }
+        }
+    },
+    "translations": {
+        "Height_(cm)": "Altura (cm)",
+        "Weight_(kg)": "Peso (kg)",
+        "BMI": "IMC",
+        "Alcohol_Consumption": "Consumo de alcohol",
+        "Fruit_Consumption": "Consumo de frutas",
+        "Green_Vegetables_Consumption": "Consumo de vegetales",
+        "FriedPotato_Consumption": "Consumo de papas fritas",
+        "General_Health": "Salud general",
+        "Checkup": "Último chequeo médico",
+        "Exercise": "Ejercicio físico",
+        "Skin_Cancer": "Cáncer de piel",
+        "Other_Cancer": "Otro cáncer",
+        "Depression": "Depresión",
+        "Diabetes": "Diabetes",
+        "Arthritis": "Artritis",
+        "Sex": "Sexo",
+        "Smoking_History": "Historial de tabaquismo",
+        "Age_Category": "Grupo de edad"
+    }
+}
