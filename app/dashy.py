@@ -24,6 +24,18 @@ def calcular_imc(peso, altura_cm):
     except:
         return None
 
+@app.callback(
+    Output("imc", "value"),
+    Input("altura", "value"),
+    Input("peso", "value"),
+    prevent_initial_call=True
+)
+def actualizar_imc(altura, peso):
+    if altura and peso and altura > 0:  # Añadida validación para evitar división por cero
+        altura_m = altura / 100  # Convertir cm a metros
+        return round(peso / (altura_m ** 2), 2)
+    return None
+
 # Cargar modelo y parámetros
 BASE_PATH = os.path.dirname(os.path.dirname(__file__))
 MODELS_PATH = os.path.join(BASE_PATH, "models_pkl")
