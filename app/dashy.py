@@ -17,7 +17,8 @@ app = dash.Dash(
     assets_folder='assets',
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
     title="HeartWise - Riesgo Cardiaco",
-    update_title=None
+    update_title=None,
+    suppress_callback_exceptions=True  # Added this parameter to fix the callback exceptions
 )
 app._favicon = "heart.png"
 server = app.server
@@ -358,11 +359,15 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, v
     Output("bloque-habitos", "style"),
     Output("bloque-medico", "style"),
     Output("resultado", "style"),
+    Output("finalizacion", "style"),
     Input("next-1", "n_clicks"),
     Input("next-2", "n_clicks"),
     Input("back-2", "n_clicks"),
     Input("back-3", "n_clicks"),
     Input("submit-button", "n_clicks"),
+    Input("nueva-prediccion", "n_clicks"),
+    Input("finalizar-prediccion", "n_clicks"),
+    Input("volver-inicio", "n_clicks"),
     State("altura", "value"),
     State("peso", "value"),
     State("imc", "value"),
@@ -376,7 +381,7 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, v
     State("chequeo", "value"),
     State("ejercicio", "value"),
 )
-def actualizar_pasos(n1, n2, b2, b3, submit,
+def actualizar_pasos(n1, n2, b2, b3, submit, nueva_pred, finalizar_pred, volver_inicio,
                      altura, peso, imc, sexo, edad,
                      tabaquismo, alcohol, fruta, verduras,
                      salud_general, chequeo, ejercicio):
@@ -386,27 +391,34 @@ def actualizar_pasos(n1, n2, b2, b3, submit,
     # Validación para avanzar del primer bloque
     if triggered_id == "next-1":
         if None in [altura, peso, imc, sexo, edad]:
-            return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
-        return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
+            return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
+        return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
 
     # Validación para avanzar del segundo bloque
     elif triggered_id == "next-2":
         if None in [tabaquismo, alcohol, fruta, verduras]:
-            return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
-        return {"display": "none"}, {"display": "none"}, {"display": "block"}, {"display": "none"}
+            return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
+        return {"display": "none"}, {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
 
     elif triggered_id == "back-2":
-        return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
+        return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
     elif triggered_id == "back-3":
-        return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}
+        return {"display": "none"}, {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
     elif triggered_id == "submit-button":
-        return {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "block"}
+        return {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "block"}, {"display": "none"}
+    elif triggered_id == "nueva-prediccion":
+        return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
+    elif triggered_id == "finalizar-prediccion":
+        return {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "block"}
+    elif triggered_id == "volver-inicio":
+        return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
 
     # Por defecto, mostrar solo el primer bloque
-    return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
+    return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
 
 @app.callback(
     Output("resultado", "children"),
+    Output("prediction_result", "data"),
     Input("submit-button", "n_clicks"),
     State("altura", "value"),
     State("peso", "value"),
@@ -426,7 +438,7 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
                       tabaquismo, alcohol, fruta, verduras,
                       salud_general, chequeo, ejercicio):
     if None in [altura, peso, imc, sexo, edad, tabaquismo, alcohol, fruta, verduras, salud_general, chequeo, ejercicio]:
-        return "Por favor, completa todos los campos antes de evaluar el riesgo."
+        return "Por favor, completa todos los campos antes de evaluar el riesgo.", None
 
     import pandas as pd
 
@@ -462,11 +474,51 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
 
     prob = modelo_lda.predict_proba(X_nuevo)[0][1]
     prediccion = int(prob > umbral_optimo)
+    
+    # Guardar resultado en BD (si es necesario)
+    try:
+        db = SessionLocal()
+        nueva_prediccion = Prediccion(
+            altura=altura, peso=peso, imc=imc,
+            sexo=sexo, edad=edad, tabaquismo=tabaquismo,
+            alcohol=alcohol, fruta=fruta, verduras=verduras,
+            salud_general=salud_general, chequeo=chequeo,
+            ejercicio=ejercicio, probabilidad=float(prob),
+            prediccion=prediccion
+        )
+        db.add(nueva_prediccion)
+        db.commit()
+    except Exception as e:
+        print(f"Error al guardar en BD: {e}")
+    finally:
+        if 'db' in locals():
+            db.close()
+    
     if prediccion == 1:
         mensaje = "⚠️ Riesgo elevado de enfermedad cardíaca. Consulte a su médico de cabecera para derivación a Cardiología."
     else:
         mensaje = "✅ Bajo riesgo de enfermedad cardíaca. Mantenga sus controles médicos regulares."
-    return f"{mensaje}<br>Probabilidad estimada: <b>{prob:.1%}</b>"
+    
+    # Usar el div existente en lugar de crear uno nuevo
+    resultado = html.Div([
+        html.Div(mensaje, className="mensaje-resultado"),
+    ])
+    
+    return resultado, {"mensaje": mensaje, "probabilidad": float(prob)}
+
+# Reset callback para limpiar los campos al iniciar nueva predicción
+@app.callback(
+    [Output(field, "value", allow_duplicate=True) if field == "imc" else Output(field, "value") 
+     for field in ["altura", "peso", "imc", "sexo", "edad", 
+                  "tabaquismo", "alcohol", "fruta", "verduras",
+                  "salud_general", "chequeo", "ejercicio"]],
+    Input("nueva-prediccion", "n_clicks"),
+    Input("volver-inicio", "n_clicks"),
+    prevent_initial_call=True
+)
+def reset_form(nueva_pred, volver_inicio):
+    # Resetear todos los campos a None
+    return [None] * 12
 
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
