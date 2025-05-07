@@ -16,13 +16,13 @@ app = dash.Dash(
     __name__,
     assets_folder='assets',
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
-    title="Riesgo Cardiaco",
+    title="HeartWise - Riesgo Cardiaco",
     update_title=None
 )
 app._favicon = "heart.png"
 server = app.server
 
-# Helper functions
+# Función para calcular el IMC
 def calcular_imc(peso, altura_cm):
     try:
         altura_m = altura_cm / 100
