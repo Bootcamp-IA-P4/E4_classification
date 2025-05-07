@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import Dict, Literal, Union
+from typing import Literal
+from utils.mapping import MAPEO_ES_EN
 
 # Tipos para categorías
 GeneralHealthOptions = Literal[1, 2, 3, 4, 5]
@@ -9,51 +10,46 @@ AgeCategoryOptions = Literal[
 ]
 
 class PredictionInput(BaseModel):
-    """Esquema para datos de entrada basado en features_description.json"""
-    Height_cm: float  # Nota: Puedes usar Height_(cm) si cambias Field(alias="Height_(cm)")
-    Weight_kg: float
-    BMI: float
-    General_Health: GeneralHealthOptions
-    Age_Category: AgeCategoryOptions
-    Alcohol_Consumption: float
-    Fruit_Consumption: float
-    Green_Vegetables_Consumption: float
-    FriedPotato_Consumption: float
-    Checkup: int
-    Exercise: int
-    Skin_Cancer: int
-    Other_Cancer: int
-    Depression: int
-    Diabetes: int
-    Arthritis: int
-    Sex: int
-    Smoking_History: int
+    """Esquema para datos de entrada en español"""
+    altura: float
+    peso: float
+    imc: float
+    salud_general: GeneralHealthOptions
+    edad: AgeCategoryOptions
+    consumo_alcohol: float
+    consumo_fruta: float
+    consumo_vegetales: float
+    consumo_papas: float
+    chequeo_medico: int
+    ejercicio: int
+    cancer_piel: int
+    otro_cancer: int
+    depresion: int
+    diabetes: int
+    artritis: int
+    sexo: int
+    historial_tabaquismo: int
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "Height_cm": 170,
-                "Weight_kg": 70,
-                "BMI": 24.2,
-                "General_Health": 3,
-                "Age_Category": "35-39",
-                # ... otros campos con valores por defecto
-            }
+    def to_english_dict(self):
+        """Convierte los nombres a inglés para el modelo"""
+        return {
+            MAPEO_ES_EN[k]: v for k, v in self.model_dump().items()
         }
 
+from pydantic import BaseModel
+
 class PredictionOutput(BaseModel):
-    """Respuesta de la API"""
-    prediction: Literal[0, 1]  # 0: No riesgo, 1: Riesgo
-    probability: float  # Valor entre 0 y 1
-    features_used: list[str]
-    message: str  # Mensaje descriptivo
+    """Esquema para la respuesta de predicción"""
+    prediction: int  # 0 o 1
+    probability: float
+    message: str
 
     class Config:
         schema_extra = {
             "example": {
                 "prediction": 1,
                 "probability": 0.87,
-                "features_used": ["Height_cm", "Weight_kg", ...],
                 "message": "Riesgo cardiovascular alto"
             }
         }
+
