@@ -26,7 +26,23 @@ async def make_prediction(input_data: PredictionInput):
         
         # 3. Preparar DataFrame para predicción
         df = pd.DataFrame([english_data])
-        df.head()
+        # Debug:
+        print(df.head())
+
+         # Verificar el orden de las columnas
+        logger.info(f"Columnas del DataFrame: {df.columns.tolist()}")
+        
+        # Asegurar que las columnas están en el orden correcto
+        expected_columns = [
+            "Height_(cm)", "Weight_(kg)", "BMI", "Alcohol_Consumption",
+            "Fruit_Consumption", "Green_Vegetables_Consumption", "FriedPotato_Consumption",
+            "General_Health", "Checkup", "Exercise", "Skin_Cancer", "Other_Cancer",
+            "Depression", "Diabetes", "Arthritis", "Sex", "Smoking_History", "Age_Category"
+        ]
+        
+        # Reordenar las columnas si es necesario
+        df = df[expected_columns]
+
         # One-hot encoding para Age_Category
         if "age_category" in df.columns:
             df_age_cat = pd.get_dummies(df["age_category"], prefix="Age_Category")
