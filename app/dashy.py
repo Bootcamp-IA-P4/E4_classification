@@ -450,7 +450,7 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
         "Alcohol_Consumption": alcohol,
         "Fruit_Consumption": fruta * 7,
         "Green_Vegetables_Consumption": verduras * 7,
-        "FriedPotato_Consumption": 0,  # Si no tienes este campo, pon 0
+        "FriedPotato_Consumption": 0,
         "General_Health": salud_general,
         "Checkup": chequeo,
         "Exercise": ejercicio,
@@ -474,17 +474,30 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
 
     prob = modelo_lda.predict_proba(X_nuevo)[0][1]
     prediccion = int(prob > umbral_optimo)
-    
-    # Guardar resultado en BD (si es necesario)
+
+    # Guardar resultado en BD (solo columnas válidas)
     try:
         db = SessionLocal()
         nueva_prediccion = Prediccion(
-            altura=altura, peso=peso, imc=imc,
-            sexo=sexo, edad=edad, tabaquismo=tabaquismo,
-            alcohol=alcohol, fruta=fruta, verduras=verduras,
-            salud_general=salud_general, chequeo=chequeo,
-            ejercicio=ejercicio, probabilidad=float(prob),
-            prediccion=prediccion
+            altura=altura,
+            peso=peso,
+            imc=imc,
+            sexo=sexo,
+            edad=edad,
+            historial_tabaquismo=tabaquismo,
+            consumo_alcohol=alcohol,
+            consumo_fruta=fruta,
+            consumo_vegetales=verduras,
+            salud_general=salud_general,
+            chequeo_medico=chequeo,
+            ejercicio=ejercicio,
+            cancer_piel=0,
+            otro_cancer=0,
+            depresion=0,
+            diabetes=0,
+            artritis=0,
+            resultado=prediccion,
+            probabilidad=float(prob)
         )
         db.add(nueva_prediccion)
         db.commit()
@@ -493,18 +506,18 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
     finally:
         if 'db' in locals():
             db.close()
-    
+
     if prediccion == 1:
         mensaje = "⚠️ Riesgo elevado de enfermedad cardíaca. Consulte a su médico de cabecera para derivación a Cardiología."
     else:
         mensaje = "✅ Bajo riesgo de enfermedad cardíaca. Mantenga sus controles médicos regulares."
-    
-    # Usar el div existente en lugar de crear uno nuevo
+
     resultado = html.Div([
         html.Div(mensaje, className="mensaje-resultado"),
     ])
-    
+
     return resultado, {"mensaje": mensaje, "probabilidad": float(prob)}
+
 
 # Reset callback para limpiar los campos al iniciar nueva predicción
 @app.callback(
