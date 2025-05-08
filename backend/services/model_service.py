@@ -16,6 +16,8 @@ async def make_prediction(input_data: PredictionInput):
         logger.info("🔮 Iniciando predicción de riesgo cardiovascular...")
 
         # 1. Cargar modelo y parámetros
+
+        # 1. Cargar modelo y parámetros
         model = joblib.load(settings.get_model_path())
         logger.debug(f"✅ Modelo cargado desde: {settings.get_model_path()}")
         info_modelo = joblib.load(settings.get_model_info_path())
