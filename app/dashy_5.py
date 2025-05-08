@@ -30,6 +30,40 @@ def calcular_imc(peso, altura_cm):
     except:
         return None
 
+def convertir_rango_edad(edad_num):
+    try:
+        edad = int(edad_num)
+        if edad < 18:
+            return "18-24"
+        elif 18 <= edad <= 24:
+            return "18-24"
+        elif 25 <= edad <= 29:
+            return "25-29"
+        elif 30 <= edad <= 34:
+            return "30-34"
+        elif 35 <= edad <= 39:
+            return "35-39"
+        elif 40 <= edad <= 44:
+            return "40-44"
+        elif 45 <= edad <= 49:
+            return "45-49"
+        elif 50 <= edad <= 54:
+            return "50-54"
+        elif 55 <= edad <= 59:
+            return "55-59"
+        elif 60 <= edad <= 64:
+            return "60-64"
+        elif 65 <= edad <= 69:
+            return "65-69"
+        elif 70 <= edad <= 74:
+            return "70-74"
+        elif 75 <= edad <= 79:
+            return "75-79"
+        else:
+            return "80+"
+    except:
+        return None
+
 # Layout
 app.layout = html.Div([
     html.Video(
@@ -52,25 +86,33 @@ app.layout = html.Div([
         # Bloque general
         html.Div(id="bloque-general", className="formulario-bloque", children=[
             html.Label("Altura (cm)"),
-            dcc.Input(id="altura", type="number", step="0.1", required=True, min=100, max=250),
+            dcc.Input(id="altura", type="number", required=True, min=100, max=250),
 
             html.Label("Peso (kg)"),
-            dcc.Input(id="peso", type="number", step="0.1", required=True, min=30, max=300),
+            dcc.Input(id="peso", type="number", required=True, min=30, max=300),
 
             html.Label("IMC"),
-            dcc.Input(id="imc", type="number", step="0.1", debounce=True, disabled=True),
+            dcc.Input(id="imc", type="number", debounce=True, disabled=True),
 
-            html.Label("Consumo de alcohol (veces/semana)"),
-            dcc.Input(id="alcohol", type="number", min=0, max=7, required=True),
+            html.Label("Sexo"),
+            dcc.Dropdown(
+                id="sexo",
+                options=[
+                    {"label": "Masculino", "value": 1},
+                    {"label": "Femenino", "value": 0}
+                ],
+                placeholder="Selecciona sexo"
+            ),
 
-            html.Label("Consumo de fruta (porciones/semana)"),
-            dcc.Input(id="fruta", type="number", min=0, max=21, required=True),
-
-            html.Label("Consumo de vegetales verdes (porciones/semana)"),
-            dcc.Input(id="verduras", type="number", min=0, max=21, required=True),
-
-            html.Label("Consumo de papas fritas (porciones/semana)"),
-            dcc.Input(id="papas", type="number", min=0, max=21, required=True),
+            html.Label("Edad (número entero)"),
+            dcc.Input(
+                id="edad", 
+                type="number", 
+                required=True,
+                min=18,
+                max=120,
+                placeholder="Ej: 45"
+            ),
 
             html.Div(
                 "Es necesario completar todos los campos para poder realizar el estudio.",
@@ -80,135 +122,114 @@ app.layout = html.Div([
             ),
         ]),
 
+        # Bloque hábitos
+        html.Div(id="bloque-habitos", className="formulario-bloque", style={"display": "none"}, children=[
+            html.Label("Consumo de alcohol (0 no / 1 sí)"),
+            dcc.Dropdown(
+                id="alcohol", 
+                options=[{"label": str(i), "value": i} for i in [0, 1]],
+                placeholder="Selecciona una opción"
+            ),
+
+            html.Label("Fruta diaria (0 no / 1 sí)"),
+            dcc.Dropdown(
+                id="fruta", 
+                options=[{"label": str(i), "value": i} for i in [0, 1]],
+                placeholder="Selecciona una opción"
+            ),
+
+            html.Label("Vegetales verdes (0 no / 1 sí)"),
+            dcc.Dropdown(
+                id="verduras", 
+                options=[{"label": str(i), "value": i} for i in [0, 1]],
+                placeholder="Selecciona una opción"
+            ),
+
+            html.Label("Papas fritas (0 no / 1 sí)"),
+            dcc.Dropdown(
+                id="papas", 
+                options=[{"label": str(i), "value": i} for i in [0, 1]],
+                placeholder="Selecciona una opción"
+            ),
+
+            html.Div(
+                "Es necesario completar todos los campos para poder continuar.",
+                id="mensaje-aviso-2", 
+                className="mensaje-aviso", 
+                style={"display": "none"}
+            ),
+        ]),
+
         # Bloque médico
         html.Div(id="bloque-medico", className="formulario-bloque", style={"display": "none"}, children=[
-            html.Label("Salud general"),
-            dcc.Dropdown(
+            html.Label("Salud general (1-5)"),
+            dcc.Slider(
                 id="salud_general", 
-                options=[
-                    {"label": "Mala", "value": 0},
-                    {"label": "Regular", "value": 1},
-                    {"label": "Buena", "value": 2},
-                    {"label": "Muy buena", "value": 3},
-                    {"label": "Excelente", "value": 4}
-                ],
-                placeholder="Selecciona una opción"
+                min=1, 
+                max=5, 
+                step=1, 
+                marks={i: str(i) for i in range(1, 6)},
+                value=3
             ),
 
-            html.Label("Chequeo médico"),
+            html.Label("Chequeo médico reciente (0 no / 1 sí)"),
             dcc.Dropdown(
                 id="chequeo", 
-                options=[
-                    {"label": "Nunca", "value": 0},
-                    {"label": "Hace 5 años o más", "value": 1},
-                    {"label": "En los últimos 5 años", "value": 2},
-                    {"label": "En los últimos 2 años", "value": 3},
-                    {"label": "En el último año", "value": 4}
-                ],
+                options=[{"label": str(i), "value": i} for i in [0, 1]],
                 placeholder="Selecciona una opción"
             ),
 
-            html.Label("¿Realiza ejercicio?"),
+            html.Label("Ejercicio (0 no / 1 sí)"),
             dcc.Dropdown(
                 id="ejercicio", 
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
+                options=[{"label": str(i), "value": i} for i in [0, 1]],
                 placeholder="Selecciona una opción"
             ),
 
-            html.Label("¿Antecedente de cáncer de piel?"),
+            html.Label("Cáncer de piel (0 no / 1 sí)"),
             dcc.Dropdown(
                 id="piel", 
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
+                options=[{"label": str(i), "value": i} for i in [0, 1]],
                 placeholder="Selecciona una opción"
             ),
 
-            html.Label("¿Antecedente de otro cáncer?"),
+            html.Label("Otro cáncer (0 no / 1 sí)"),
             dcc.Dropdown(
                 id="cancer", 
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
+                options=[{"label": str(i), "value": i} for i in [0, 1]],
                 placeholder="Selecciona una opción"
             ),
 
-            html.Label("¿Depresión diagnosticada?"),
+            html.Label("Depresión (0 no / 1 sí)"),
             dcc.Dropdown(
                 id="depresion", 
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
+                options=[{"label": str(i), "value": i} for i in [0, 1]],
                 placeholder="Selecciona una opción"
             ),
 
-            html.Label("¿Diabetes?"),
+            html.Label("Diabetes (0 no / 1 sí)"),
             dcc.Dropdown(
                 id="diabetes", 
-                options=[
-                    {"label": "No", "value": 0},
-                    {"label": "No, pre-diabetes o borderline", "value": 1},
-                    {"label": "Sí", "value": 2},
-                    {"label": "Sí, solo durante embarazo", "value": 3}
-                ],
+                options=[{"label": str(i), "value": i} for i in [0, 1]],
                 placeholder="Selecciona una opción"
             ),
 
-            html.Label("¿Artritis?"),
+            html.Label("Artritis (0 no / 1 sí)"),
             dcc.Dropdown(
                 id="artritis", 
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
-                placeholder="Selecciona una opción"
-            ),
-
-            html.Label("Sexo"),
-            dcc.Dropdown(
-                id="sexo",
-                options=[
-                    {"label": "Masculino", "value": 0},
-                    {"label": "Femenino", "value": 1}
-                ],
-                placeholder="Selecciona sexo"
-            ),
-
-            html.Label("Historial de tabaquismo"),
-            dcc.Dropdown(
-                id="historial_tabaquismo",
-                options=[
-                    {"label": "Sí", "value": 1},
-                    {"label": "No", "value": 0}
-                ],
+                options=[{"label": str(i), "value": i} for i in [0, 1]],
                 placeholder="Selecciona una opción"
             ),
             
-            html.Label("Edad"),
+            html.Label("Historial de tabaquismo"),
             dcc.Dropdown(
-                id="edad",
+                id="smoking_history",
                 options=[
-                    {"label": "18-24", "value": "18-24"},
-                    {"label": "25-29", "value": "25-29"},
-                    {"label": "30-34", "value": "30-34"},
-                    {"label": "35-39", "value": "35-39"},
-                    {"label": "40-44", "value": "40-44"},
-                    {"label": "45-49", "value": "45-49"},
-                    {"label": "50-54", "value": "50-54"},
-                    {"label": "55-59", "value": "55-59"},
-                    {"label": "60-64", "value": "60-64"},
-                    {"label": "65-69", "value": "65-69"},
-                    {"label": "70-74", "value": "70-74"},
-                    {"label": "75-79", "value": "75-79"},
-                    {"label": "80 o más", "value": "80+"}
+                    {"label": "No fumador", "value": 0},
+                    {"label": "Ex-fumador", "value": 1},
+                    {"label": "Fumador actual", "value": 2}
                 ],
-                placeholder="Selecciona rango de edad"
+                placeholder="Selecciona una opción"
             ),
             
             html.Button("Evaluar Riesgo", id="submit-button", n_clicks=0, className="boton-evaluar"),
@@ -233,22 +254,34 @@ def calcular_imc_autom(peso, altura, imc_actual):
     return dash.no_update
 
 @app.callback(
-    Output("bloque-medico", "style"),
+    Output("bloque-habitos", "style"),
     Output("bloque-general", "style"),
     Output("mensaje-aviso-1", "style"),
     Input("altura", "value"),
     Input("peso", "value"),
     Input("imc", "value"),
+    Input("sexo", "value"),
+    Input("edad", "value")
+)
+def validar_general(altura, peso, imc, sexo, edad):
+    if all(x is not None for x in [altura, peso, imc, sexo, edad]):
+        return {"display": "block"}, {"display": "none"}, {"display": "none"}
+    else:
+        return {"display": "none"}, {"display": "block"}, {"display": "block"}
+
+@app.callback(
+    Output("bloque-medico", "style"),
+    Output("mensaje-aviso-2", "style"),
     Input("alcohol", "value"),
     Input("fruta", "value"),
     Input("verduras", "value"),
     Input("papas", "value")
 )
-def validar_general(altura, peso, imc, alcohol, fruta, verduras, papas):
-    if all(x is not None for x in [altura, peso, imc, alcohol, fruta, verduras, papas]):
-        return {"display": "block"}, {"display": "none"}, {"display": "none"}
+def validar_habitos(alcohol, fruta, verduras, papas):
+    if all(x is not None for x in [alcohol, fruta, verduras, papas]):
+        return {"display": "block"}, {"display": "none"}
     else:
-        return {"display": "none"}, {"display": "block"}, {"display": "block"}
+        return {"display": "none"}, {"display": "block"}
 
 @app.callback(
     Output("resultado", "children"),
@@ -279,7 +312,12 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, v
     if not n_clicks:
         return "", ""
     
-    campos = [altura, peso, imc, sexo, edad, alcohol, fruta, verduras, papas,
+    # Convertir edad a rango primero
+    rango_edad = convertir_rango_edad(edad)
+    if not rango_edad:
+        return html.Div("Edad inválida. Debe ser un número entre 18 y 120"), ""
+    
+    campos = [altura, peso, imc, sexo, rango_edad, alcohol, fruta, verduras, papas,
               salud_general, chequeo, ejercicio, piel, cancer, depresion, diabetes, artritis,
               historial_tabaquismo]
     
@@ -293,7 +331,7 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, v
             "peso": float(peso),
             "imc": float(imc),
             "sexo": int(sexo),
-            "edad": edad,
+            "edad": rango_edad,
             "consumo_alcohol": int(alcohol),
             "consumo_fruta": int(fruta),
             "consumo_vegetales": int(verduras),
