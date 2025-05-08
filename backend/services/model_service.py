@@ -88,5 +88,5 @@ async def make_prediction(input_data: PredictionInput):
         )
 
     except Exception as e:
-        logger.error(f"Error en make_prediction: {str(e)}", exc_info=True)
+        logger.error(f"❌ Error en make_prediction: {str(e)}", exc_info=True)
         raise
