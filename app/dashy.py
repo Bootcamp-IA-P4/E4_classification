@@ -353,7 +353,7 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, v
             error_msg += f"\nDetalles: {e.response.text}"
         return html.Div(error_msg, className="error-mensaje"), ""
 
-# Callback para mostrar cada bloque según el paso actual
+# ↓↓↓ ACTUALIZADO: Añadidos estados para los nuevos campos médicos ↓↓↓
 @app.callback(
     Output("bloque-general", "style"),
     Output("bloque-habitos", "style"),
@@ -380,12 +380,13 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, v
     State("salud_general", "value"),
     State("chequeo", "value"),
     State("ejercicio", "value"),
+    # ↓↓↓ Se mantiene igual al no ser necesarios para validación de este callback ↓↓↓
 )
 def actualizar_pasos(n1, n2, b2, b3, submit, nueva_pred, finalizar_pred, volver_inicio,
                      altura, peso, imc, sexo, edad,
                      tabaquismo, alcohol, fruta, verduras,
                      salud_general, chequeo, ejercicio):
-    # Manejo robusto del trigger
+    # Código sin cambios...
     triggered_id = ctx.triggered_id if ctx.triggered_id is not None else ""
 
     # Validación para avanzar del primer bloque
@@ -416,7 +417,7 @@ def actualizar_pasos(n1, n2, b2, b3, submit, nueva_pred, finalizar_pred, volver_
     # Por defecto, mostrar solo el primer bloque
     return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
 
-# ↓↓↓ CAMBIO 3: Simplificar el callback de mostrar_resultado para que solo actualice el mensaje ↓↓↓
+# ↓↓↓ MODIFICADO: Callback para incluir campos médicos adicionales ↓↓↓
 @app.callback(
     Output("mensaje-resultado", "children"),
     Output("prediction_result", "data"),
@@ -433,17 +434,28 @@ def actualizar_pasos(n1, n2, b2, b3, submit, nueva_pred, finalizar_pred, volver_
     State("salud_general", "value"),
     State("chequeo", "value"),
     State("ejercicio", "value"),
+    # ↓↓↓ NUEVO: Añadidos estados para los campos médicos ↓↓↓
+    State("cancer_piel", "value"),
+    State("otro_cancer", "value"),
+    State("depresion", "value"),
+    State("diabetes", "value"),
+    State("artritis", "value"),
     prevent_initial_call=True
 )
 def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
                       tabaquismo, alcohol, fruta, verduras,
-                      salud_general, chequeo, ejercicio):
-    if None in [altura, peso, imc, sexo, edad, tabaquismo, alcohol, fruta, verduras, salud_general, chequeo, ejercicio]:
+                      salud_general, chequeo, ejercicio,
+                      # ↓↓↓ NUEVO: Añadidos parámetros para los campos médicos ↓↓↓
+                      cancer_piel, otro_cancer, depresion, diabetes, artritis):
+    
+    # ↓↓↓ ACTUALIZADO: Validación para incluir nuevos campos ↓↓↓
+    if None in [altura, peso, imc, sexo, edad, tabaquismo, alcohol, fruta, verduras, 
+                salud_general, chequeo, ejercicio, cancer_piel, otro_cancer, depresion, diabetes, artritis]:
         return "Por favor, completa todos los campos antes de evaluar el riesgo.", None
 
     import pandas as pd
 
-    # Prepara los datos igual que en tu modelo
+    # ↓↓↓ ACTUALIZADO: Incluir campos médicos en los datos del modelo ↓↓↓
     datos = {
         "Height_(cm)": altura,
         "Weight_(kg)": peso,
@@ -451,19 +463,21 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
         "Alcohol_Consumption": alcohol,
         "Fruit_Consumption": fruta * 7,
         "Green_Vegetables_Consumption": verduras * 7,
-        "FriedPotato_Consumption": 0,
+        "FriedPotato_Consumption": 0,  # Mantenido como 0 por compatibilidad
         "General_Health": salud_general,
         "Checkup": chequeo,
         "Exercise": ejercicio,
-        "Skin_Cancer": 0,
-        "Other_Cancer": 0,
-        "Depression": 0,
-        "Diabetes": 0,
-        "Arthritis": 0,
+        # ↓↓↓ ACTUALIZADO: Usar los valores reales proporcionados por el usuario ↓↓↓
+        "Skin_Cancer": cancer_piel,
+        "Other_Cancer": otro_cancer,
+        "Depression": depresion,
+        "Diabetes": diabetes,
+        "Arthritis": artritis,
         "Sex": sexo,
         "Smoking_History": tabaquismo,
         "Age_Category": edad
     }
+    
     df = pd.DataFrame([datos])
     df_age_cat = pd.get_dummies(df["Age_Category"], prefix="Age_Category")
     df = df.drop(["Age_Category"], axis=1)
@@ -476,7 +490,7 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
     prob = modelo_lda.predict_proba(X_nuevo)[0][1]
     prediccion = int(prob > umbral_optimo)
 
-    # Guardar resultado en BD (solo columnas válidas)
+    # ↓↓↓ ACTUALIZADO: Guardar información completa en la base de datos ↓↓↓
     try:
         db = SessionLocal()
         nueva_prediccion = Prediccion(
@@ -487,48 +501,60 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
             edad=edad,
             historial_tabaquismo=tabaquismo,
             consumo_alcohol=alcohol,
-            consumo_fruta=fruta,
-            consumo_vegetales=verduras,
+            consumo_fruta=fruta * 7,
+            consumo_vegetales=verduras * 7,
+            consumo_papas=0,
             salud_general=salud_general,
             chequeo_medico=chequeo,
             ejercicio=ejercicio,
-            cancer_piel=0,
-            otro_cancer=0,
-            depresion=0,
-            diabetes=0,
-            artritis=0,
+            # ↓↓↓ ACTUALIZADO: Usar los valores reales de los campos médicos ↓↓↓
+            cancer_piel=cancer_piel,
+            otro_cancer=otro_cancer,
+            depresion=depresion,
+            diabetes=diabetes,
+            artritis=artritis,
             resultado=prediccion,
             probabilidad=float(prob)
         )
+        
+        logger.info(f"Guardando predicción completa: altura={altura}, peso={peso}, imc={imc}, " +
+                    f"cancer_piel={cancer_piel}, otro_cancer={otro_cancer}, depresion={depresion}")
+        
         db.add(nueva_prediccion)
         db.commit()
+        logger.info(f"Predicción guardada exitosamente con ID: {nueva_prediccion.id}")
+        
     except Exception as e:
-        print(f"Error al guardar en BD: {e}")
+        logger.error(f"Error al guardar en BD: {e}")
+        if 'db' in locals():
+            db.rollback()
     finally:
         if 'db' in locals():
             db.close()
+            logger.info("Conexión a base de datos cerrada")
 
     if prediccion == 1:
         mensaje = "⚠️ Riesgo elevado de enfermedad cardíaca. Consulte a su médico de cabecera para derivación a Cardiología."
     else:
         mensaje = "✅ Bajo riesgo de enfermedad cardíaca. Mantenga sus controles médicos regulares."
 
-    # Solo retornamos el mensaje, no la estructura completa
     return mensaje, {"mensaje": mensaje, "probabilidad": float(prob)}
 
-# Reset callback para limpiar los campos al iniciar nueva predicción
+# ↓↓↓ ACTUALIZADO: Incluir los nuevos campos en el reset del formulario ↓↓↓
 @app.callback(
     [Output(field, "value", allow_duplicate=True) if field == "imc" else Output(field, "value") 
      for field in ["altura", "peso", "imc", "sexo", "edad", 
                   "tabaquismo", "alcohol", "fruta", "verduras",
-                  "salud_general", "chequeo", "ejercicio"]],
+                  "salud_general", "chequeo", "ejercicio",
+                  # ↓↓↓ NUEVO: Añadir campos médicos al reset ↓↓↓
+                  "cancer_piel", "otro_cancer", "depresion", "diabetes", "artritis"]],
     Input("nueva-prediccion", "n_clicks"),
     Input("volver-inicio", "n_clicks"),
     prevent_initial_call=True
 )
 def reset_form(nueva_pred, volver_inicio):
-    # Resetear todos los campos a None
-    return [None] * 12
+    # ↓↓↓ ACTUALIZADO: Resetear todos los campos, incluyendo los nuevos ↓↓↓
+    return [None] * 17  # Ahora son 17 campos en total
 
 if __name__ == "__main__":
     app.run(debug=True, port=8050)
