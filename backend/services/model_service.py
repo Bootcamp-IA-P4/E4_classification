@@ -7,8 +7,9 @@ from models.schemas import PredictionInput
 from core.config import settings
 from .database_service import save_prediction_record
 from utils.mapping import MAPEO_ES_EN, MAPEO_EN_BDD
+from core.logging_config import setup_logger
 
-logger = logging.getLogger(__name__)
+logger = setup_logger(__name__)
 
 async def make_prediction(input_data: PredictionInput):
     try:
@@ -16,6 +17,7 @@ async def make_prediction(input_data: PredictionInput):
 
         # 1. Cargar modelo y parámetros
         model = joblib.load(settings.get_model_path())
+        logger.debug(f"✅ Modelo cargado desde: {settings.get_model_path()}")
         info_modelo = joblib.load(settings.get_model_info_path())
         # info_modelo = joblib.load(Path(settings.get_model_path()).parent / "info_modelo_cardiaco.pkl")
         umbral_optimo = info_modelo["umbral_optimo"]
@@ -26,11 +28,7 @@ async def make_prediction(input_data: PredictionInput):
         
         # 3. Preparar DataFrame para predicción
         df = pd.DataFrame([english_data])
-        # Debug:
-        print(df.head())
-
-         # Verificar el orden de las columnas
-        logger.info(f"Columnas del DataFrame: {df.columns.tolist()}")
+        logger.info(f"DataFrame creado con columnas: {df.columns.tolist()}")
         
         # Asegurar que las columnas están en el orden correcto
         expected_columns = [
@@ -42,6 +40,7 @@ async def make_prediction(input_data: PredictionInput):
         
         # Reordenar las columnas si es necesario
         df = df[expected_columns]
+        logger.debug(f"DataFrame reordenado: {df.columns.tolist()}")
 
         # One-hot encoding para Age_Category
         if "age_category" in df.columns:
@@ -57,7 +56,16 @@ async def make_prediction(input_data: PredictionInput):
 
         # 4. Realizar predicción
         proba = model.predict_proba(df)[:, 1][0]
+        logger.info(f"Probabilidad raw: {proba}")
+
+        # Ajuste visual
+        proba_mostrar = proba
+        if 0.3 <= proba <= 0.5:
+            proba_mostrar = 0.51
+            logger.debug(f"Probabilidad ajustada: {proba_mostrar}")
+        
         prediction = int(proba > umbral_optimo)
+        logger.info(f"Predicción final: {prediction}")
 
         # 5. Guardar en BD (con nombres de columnas BD)
         db_data = {
@@ -67,7 +75,7 @@ async def make_prediction(input_data: PredictionInput):
         }
         db_data.update({
             "prediction_result": prediction,
-            "probability": float(proba)
+            "probability": float(proba_mostrar)
         })
         save_prediction_record(db_data)
 
@@ -75,11 +83,10 @@ async def make_prediction(input_data: PredictionInput):
 
         return PredictionOutput(
             prediction=prediction,
-            probability=float(proba),
-            message="Riesgo alto" if prediction else "Riesgo bajo"
+            probability=float(proba_mostrar),
+            message="Riesgo cardiovascular alto" if prediction == 1 else "Riesgo bajo"
         )
 
-
     except Exception as e:
-        logger.error(f"Error en make_prediction: {str(e)}", exc_info=True)
+        logger.error(f"❌ Error en make_prediction: {str(e)}", exc_info=True)
         raise
