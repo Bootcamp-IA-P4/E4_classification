@@ -7,20 +7,19 @@ from core.terminal_interface import TerminalInterface
 import joblib
 from pathlib import Path
 import sys
-import logging
+from core.logging_config import setup_logger
 from db.database import db_config
 from db.models import Base
-
+# Configuración de rutas API
+from api.v1.routes.predict import router as predict_router
 
 # Configuración básica de logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+logger = setup_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Startup
+    logger.info("🚀 Iniciando aplicación FastAPI...")
     try:
         # Inicializar base de datos
         db_config.initialize()
@@ -38,10 +37,13 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"❌ Error durante el startup: {str(e)}")
         raise
+    
+    # Shutdown
+    logger.info("🛑 Cerrando aplicación FastAPI...")
 
 # Crea UNA sola instancia de FastAPI con lifespan
 app = FastAPI(title=settings.PROJECT_NAME, lifespan=lifespan)
-
+app.include_router(predict_router, prefix=settings.API_V1_STR)
 # Configuración CORS (justo después de crear la app)
 app.add_middleware(
     CORSMiddleware,
@@ -50,12 +52,6 @@ app.add_middleware(
     allow_methods=["POST"],
     allow_headers=["*"],
 )
-
-
-# Configuración de rutas API
-from api.v1.routes.predict import router as predict_router
-app.include_router(predict_router, prefix=settings.API_V1_STR)
-
 
 def run_terminal_interface():
     """Ejecuta la interfaz de terminal"""
