@@ -34,7 +34,7 @@ class DatabaseConfig:
             self.DB_PASSWORD = quote_plus(os.getenv("MYSQL_PASSWORD", ""))
             # Debug
             # print(f"Contraseña cargada: {self.DB_PASSWORD}")
-            self.DB_HOST = os.getenv("MYSQL_HOST", "localhost")
+            self.DB_HOST = os.getenv("MYSQL_HOST", "mysql_db")
             self.DB_NAME = os.getenv("MYSQL_DB", "heart_disease_db")
             self.DB_PORT = os.getenv("MYSQL_PORT", "3306")
             
