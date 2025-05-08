@@ -18,7 +18,7 @@ app = dash.Dash(
     meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
     title="HeartWise - Riesgo Cardiaco",
     update_title=None,
-    suppress_callback_exceptions=True  # Added this parameter to fix the callback exceptions
+    suppress_callback_exceptions=True
 )
 app._favicon = "heart.png"
 server = app.server
@@ -416,8 +416,9 @@ def actualizar_pasos(n1, n2, b2, b3, submit, nueva_pred, finalizar_pred, volver_
     # Por defecto, mostrar solo el primer bloque
     return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
 
+# ↓↓↓ CAMBIO 3: Simplificar el callback de mostrar_resultado para que solo actualice el mensaje ↓↓↓
 @app.callback(
-    Output("resultado", "children"),
+    Output("mensaje-resultado", "children"),
     Output("prediction_result", "data"),
     Input("submit-button", "n_clicks"),
     State("altura", "value"),
@@ -512,12 +513,8 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad,
     else:
         mensaje = "✅ Bajo riesgo de enfermedad cardíaca. Mantenga sus controles médicos regulares."
 
-    resultado = html.Div([
-        html.Div(mensaje, className="mensaje-resultado"),
-    ])
-
-    return resultado, {"mensaje": mensaje, "probabilidad": float(prob)}
-
+    # Solo retornamos el mensaje, no la estructura completa
+    return mensaje, {"mensaje": mensaje, "probabilidad": float(prob)}
 
 # Reset callback para limpiar los campos al iniciar nueva predicción
 @app.callback(
