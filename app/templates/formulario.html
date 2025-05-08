@@ -23,20 +23,57 @@
                 <input type="number" name="imc" step="0.1" required>
             </div>
             <div class="campo">
-                <label>Consumo de alcohol (veces/semana):</label>
-                <input type="number" name="consumo_alcohol" min="0" max="7" required>
+                <label>Consumo de alcohol (frecuencia):</label>
+                <select name="consumo_alcohol" required>
+                    <option value="0">Ninguna</option>
+                    <option value="1">Ocasional (1/semana)</option>
+                    <option value="7">1 vez al día</option>
+                    <option value="14">2 veces al día</option>
+                    <option value="21">3 veces al día</option>
+                    <option value="30">4-5 veces al día</option>
+                </select>
             </div>
             <div class="campo">
-                <label>Consumo de fruta (porciones/semana):</label>
-                <input type="number" name="consumo_fruta" min="0" max="21" required>
+                <label>Consumo de fruta (porciones/día):</label>
+                <select name="consumo_fruta" required>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="9">9</option>
+                    <option value="13">13</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                </select>
             </div>
             <div class="campo">
-                <label>Consumo de vegetales verdes (porciones/semana):</label>
-                <input type="number" name="consumo_vegetales" min="0" max="21" required>
+                <label>Consumo de vegetales verdes (porciones/día):</label>
+                <select name="consumo_vegetales" required>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="9">9</option>
+                    <option value="13">13</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                </select>
             </div>
             <div class="campo">
-                <label>Consumo de papas fritas (porciones/semana):</label>
-                <input type="number" name="consumo_papas" min="0" max="21" required>
+                <label>Consumo de papas fritas (porciones/día):</label>
+                <select name="consumo_papas" required>
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="9">9</option>
+                    <option value="13">13</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                </select>
             </div>
             <div class="campo">
                 <label>Salud general:</label>
