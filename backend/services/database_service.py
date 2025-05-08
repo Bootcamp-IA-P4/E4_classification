@@ -1,21 +1,21 @@
 from sqlalchemy.orm import Session
 from db.models import PredictionRecord
 from db.database import db_config
-import logging
+from core.logging_config import setup_logger
 
-logger = logging.getLogger(__name__)
+logger = setup_logger(__name__)
 
-def save_prediction_record(prediction_data: dict):
+def save_prediction_record(data: dict):
     try:
+        logger.info("💾 Guardando predicción en base de datos...")
         db = db_config.SessionLocal()
-        record = PredictionRecord(**prediction_data)
-        db.add(record)
+        registro = PredictionRecord(**data)
+        db.add(registro)
         db.commit()
-        logger.info(f"Predicción guardada en DB con ID: {record.id}")
-        return record
+        logger.info("✅ Predicción guardada exitosamente")
+        return registro
     except Exception as e:
-        db.rollback()
-        logger.error(f"Error al guardar predicción: {str(e)}")
+        logger.error(f"❌ Error al guardar en BD: {str(e)}", exc_info=True)
         raise
     finally:
         db.close()
