@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Configuración del backend
-BACKEND_URL = "http://localhost:8000"
+BACKEND_URL = "http://backend:8000"
 PREDICT_ENDPOINT = f"{BACKEND_URL}/api/v1/routes/predict"
 
 # Inicialización de la app
@@ -443,4 +443,5 @@ def reset_form(nueva_pred, volver_inicio):
 
 if __name__ == "__main__":
     logger.info("Iniciando aplicación HeartWise con conexión a API...")
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run_server(debug=True, host="0.0.0.0", port=8050)
