@@ -31,8 +31,8 @@ class DatabaseConfig:
         if env_path.exists():
             load_dotenv(env_path)
         
-        self.DB_USER = os.getenv("MYSQL_USER", "jdomdev")
-        self.DB_PASSWORD = quote_plus(os.getenv("MYSQL_PASSWORD", ""))
+        self.DB_USER = os.getenv("MYSQL_USER", "root")
+        self.DB_PASSWORD = quote_plus(os.getenv("MYSQL_PASSWORD", "")) # Contraseña de tu env
         self.DB_HOST = os.getenv("MYSQL_HOST", "localhost")
         self.DB_NAME = os.getenv("MYSQL_DB", "heart_disease_db")
         self.DB_PORT = os.getenv("MYSQL_PORT", "3306")
