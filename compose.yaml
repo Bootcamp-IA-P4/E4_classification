@@ -1,0 +1,63 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/dockerfile
+
+    container_name: fastapi_backend
+
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    
+    ports:
+      - 8000:8000
+
+    networks:
+      - app-network
+  
+
+  frontend:
+    build:
+      context: .
+      dockerfile: client/dockerfile
+    container_name: dash_frontend
+    ports:
+      - 8050:8050
+    environment:
+      - BACKEND_URL=http://backend:8000
+    
+    networks:
+      - app-network
+  
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: rootpassword #Cambiar a la contraseña que tengas en tu .env
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    ports:
+      - 3307:3306
+    
+    networks:
+      - app-network
+    
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
