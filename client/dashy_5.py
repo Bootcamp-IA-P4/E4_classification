@@ -223,7 +223,7 @@ app.layout = html.Div([
             
             html.Label("Historial de tabaquismo"),
             dcc.Dropdown(
-                id="smoking_history",
+                id="historial_tabaquismo",  # Cambiado de smoking_history a historial_tabaquismo
                 options=[
                     {"label": "No fumador", "value": 0},
                     {"label": "Ex-fumador", "value": 1},
