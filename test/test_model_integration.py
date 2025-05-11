@@ -4,11 +4,13 @@ import joblib
 import numpy as np
 import pandas as pd
 import pytest
+import pathlib
 
-MODELS_PATH = os.path.join(os.path.dirname(__file__), '../models_pkl')
-MODEL_FILE = os.path.join(MODELS_PATH, 'modelo_predictor_enfermedad_cardiaca.pkl')
-INFO_FILE = os.path.join(MODELS_PATH, 'info_modelo_cardiaco.pkl')
-SCALER_FILE = os.path.join(MODELS_PATH, 'scaler_modelo_cardiaco.pkl')
+PROJECT_ROOT = pathlib.Path(__file__).resolve().parents[1] 
+MODELS_PATH = PROJECT_ROOT / 'backend' / 'data'
+MODEL_FILE = MODELS_PATH / "modelo_predictor_enfermedad_cardiaca.pkl"
+INFO_FILE = MODELS_PATH / "info_modelo_cardiaco.pkl"
+SCALER_FILE = MODELS_PATH / "scaler_modelo_cardiaco.pkl"
 
 @pytest.fixture(scope="module")
 def modelo_y_info():
