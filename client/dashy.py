@@ -327,7 +327,6 @@ def actualizar_pasos(n1, n2, b2, b3, submit, nueva_pred, finalizar_pred, volver_
     return {"display": "block"}, {"display": "none"}, {"display": "none"}, {"display": "none"}, {"display": "none"}
 
 # Callback para enviar datos a la API y mostrar resultados
-# ... (todo el código anterior permanece igual hasta el callback mostrar_resultado)
 
 @app.callback(
     Output("mensaje-resultado", "children"),
@@ -370,8 +369,8 @@ def mostrar_resultado(n_clicks, altura, peso, imc, sexo, edad, alcohol, fruta, v
         "sexo": int(sexo),
         "edad": edad,
         "consumo_alcohol": int(alcohol),
-        "consumo_fruta": int(fruta) * 7,  # Convertir a semanal
-        "consumo_vegetales": int(verduras) * 7,  # Convertir a semanal
+        "consumo_fruta": int(fruta) * 7,
+        "consumo_vegetales": int(verduras) * 7,
         "consumo_papas": int(papas),
         "salud_general": int(salud_general),
         "chequeo_medico": int(chequeo),

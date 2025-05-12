@@ -22,7 +22,7 @@ def modelo_y_info():
 @pytest.mark.integration
 def test_pipeline_predict(modelo_y_info):
     modelo, info, scaler = modelo_y_info
-    # Simula datos de entrada válidos (ajusta según tus variables)
+    # Simula datos de entrada válidos
     variables = info['variables']
     # Valores de ejemplo: todos ceros excepto una edad categórica
     X = pd.DataFrame([np.zeros(len(variables))], columns=variables)
@@ -45,7 +45,7 @@ def test_pipeline_predict(modelo_y_info):
 def test_pipeline_with_realistic_input(modelo_y_info):
     modelo, info, scaler = modelo_y_info
     variables = info['variables']
-    # Ejemplo de datos realistas (ajusta según tus variables)
+    # Ejemplo de datos realistas
     data = {k: 0 for k in variables}
     for col in variables:
         if col.startswith('Age_Category_'):

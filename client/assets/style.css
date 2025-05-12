@@ -109,7 +109,7 @@ button:hover, .dash-button:hover {
     margin-bottom: 40px;
 }
 
-/* Animación de latidos */
+/* Heart animation */
 .resultado {
     text-align: center;
     padding: 30px;
@@ -125,12 +125,12 @@ button:hover, .dash-button:hover {
     0% { background-color: #ff4444; }
     100% { background-color: #ff8888; }
 }
-/* Estilo para el contenedor principal */
+/* Style for main container */
 #main-container {
     scroll-behavior: smooth;
 }
 
-/* Estilo para los botones fijos */
+/* Fixed buttons style */
 .form-button {
     min-width: 150px;
     border: none;
@@ -150,7 +150,7 @@ button:hover, .dash-button:hover {
     font-weight: bold;
 }
 
-/* Asegurar que el contenido no quede detrás de los botones */
+/* Buttons always at front */
 .bloque {
     margin-bottom: 80px;
 }
