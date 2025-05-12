@@ -119,7 +119,7 @@ app.layout = html.Div([
                 placeholder="Selecciona"
             ),
 
-            html.Label("Consumo de fruta (porciones/día)"),
+            html.Label("Consumo de fruta (porciones/semana)"),
             dcc.Dropdown(
                 id="fruta",
                 options=[
@@ -128,7 +128,7 @@ app.layout = html.Div([
                 placeholder="Selecciona"
             ),
 
-            html.Label("Consumo de vegetales verdes (porciones/día)"),
+            html.Label("Consumo de vegetales verdes (porciones/semana)"),
             dcc.Dropdown(
                 id="verduras",
                 options=[
