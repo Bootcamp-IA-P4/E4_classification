@@ -99,7 +99,6 @@ E4_classification/
 │   └── static/                       # Archivos JS estáticos
 │
 ├── data/                             # Datos y modelos para ML
-│   ├── CVD_cleaned.csv               # Dataset principal limpio
 │
 ├── models/                           # Modelos y scripts auxiliares
 │   └── models.py                     # Definición de modelos ML o utilidades
