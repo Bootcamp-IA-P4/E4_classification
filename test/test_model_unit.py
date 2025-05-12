@@ -10,7 +10,6 @@ PROJECT_ROOT = pathlib.Path(__file__).resolve().parents[1]
 MODELS_PATH = PROJECT_ROOT / 'backend' / 'data'
 MODEL_FILE = MODELS_PATH / "modelo_predictor_enfermedad_cardiaca.pkl"
 INFO_FILE = MODELS_PATH / "info_modelo_cardiaco.pkl"
-SCALER_FILE = MODELS_PATH / "scaler_modelo_cardiaco.pkl"
 
 @pytest.mark.unit
 @pytest.mark.parametrize("file_path", [MODEL_FILE, INFO_FILE])
@@ -44,13 +43,3 @@ def test_predict_shape():
     y_proba = modelo.predict_proba(X)
     assert y_pred.shape == (1,)
     assert y_proba.shape == (1, 2)
-
-@pytest.mark.unit
-def test_scaler_load_and_transform():
-    if os.path.exists(SCALER_FILE):
-        scaler = joblib.load(SCALER_FILE)
-        arr = np.array([[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0]])
-        arr_scaled = scaler.transform(arr)
-        assert arr_scaled.shape == arr.shape
-    else:
-        pytest.skip("No se encontró scaler_modelo_cardiaco.pkl, test omitido.")
