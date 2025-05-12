@@ -3,7 +3,7 @@ FROM python:${PYTHON_VERSION}-slim
 
 WORKDIR /app
 
-# Instala dependencias del sistema necesarias para bases de datos y compilación
+
 RUN apt-get update && apt-get install -y \
     pkg-config \
     libmariadb-dev \
@@ -11,16 +11,16 @@ RUN apt-get update && apt-get install -y \
     default-mysql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar e instalar dependencias Python
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copiar toda la carpeta backend al contenedor
+
 COPY backend/ .
 
-# Expone el puerto que usa FastAPI
+
 EXPOSE 8000
 
-# Ejecutar el servidor uvicorn apuntando al archivo y app
-CMD ["uvicorn", "utils.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+
+CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]

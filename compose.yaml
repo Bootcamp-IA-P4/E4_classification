@@ -17,11 +17,12 @@ services:
 
     networks:
       - app-network
+  
 
   frontend:
     build:
       context: .
-      dockerfile: app/dockerfile
+      dockerfile: client/dockerfile
     container_name: dash_frontend
     ports:
       - 8050:8050
@@ -32,12 +33,12 @@ services:
       - app-network
   
   db:
-    image: mysql:8.0.41
+    image: mysql:8.0
     container_name: mysql_db
     restart: always
     environment:
       MYSQL_ROOT_HOST: '%'
-      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_ROOT_PASSWORD: rootpassword #Cambiar a la contraseña que tengas en tu .env
 
     volumes:
       - mysql_data:/var/lib/mysql

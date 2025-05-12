@@ -12,4 +12,4 @@ EXPOSE 8050
 
 COPY . .
 
-CMD ["python", "app/dashy.py"]
+CMD ["python", "client/dashy.py"]

@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
@@ -64,10 +65,17 @@ def run_terminal_interface():
     except Exception as e:
         logger.error(f"❌ Error en la interfaz de terminal: {str(e)}")
         raise
+    try:
+        terminal = TerminalInterface(model)
+        terminal.run()
+    except Exception as e:
+        logger.error(f"❌ Error en la interfaz de terminal: {str(e)}")
+        raise
 
 if __name__ == "__main__":
     if "--terminal" in sys.argv or "-t" in sys.argv:
         run_terminal_interface()
     else:
         import uvicorn
+        uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
         uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
