@@ -1,14 +1,14 @@
 import os
 from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base, scoped_session
 from urllib.parse import quote_plus
 from pathlib import Path
 from dotenv import load_dotenv
 import logging
+from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
 
-# Define Base aquí mismo
 Base = declarative_base()
 
 class DatabaseConfig:
@@ -32,7 +32,7 @@ class DatabaseConfig:
             load_dotenv(env_path)
         
         self.DB_USER = os.getenv("MYSQL_USER", "root")
-        self.DB_PASSWORD = quote_plus(os.getenv("MYSQL_PASSWORD", "rootpassword")) # Contraseña de tu env
+        self.DB_PASSWORD = quote_plus(os.getenv("MYSQL_PASSWORD", "rootpassword"))
         self.DB_HOST = os.getenv("MYSQL_HOST", "db")
         self.DB_NAME = os.getenv("MYSQL_DB", "heart_disease_db")
         self.DB_PORT = os.getenv("MYSQL_PORT", "3306")
@@ -45,11 +45,11 @@ class DatabaseConfig:
         logger.info(f"Database URL: {self.DATABASE_URL.replace(self.DB_PASSWORD, '*****')}")
         
         self.engine = None
-        self.SessionLocal = None
+        self.session_factory = None
     
     def initialize(self):
         """Establece la conexión a la base de datos"""
-        if not hasattr(self, 'SessionLocal') or self.SessionLocal is None:
+        if not hasattr(self, 'session_factory') or self.session_factory is None:
             try:
                 self._create_database_if_not_exists()
                 self._setup_main_connection()
@@ -81,15 +81,27 @@ class DatabaseConfig:
             pool_recycle=3600
         )
         
-        self.SessionLocal = sessionmaker(
+        self.session_factory = sessionmaker(
             autocommit=False,
             autoflush=False,
             bind=self.engine
         )
+    
+    @contextmanager
+    def get_session(self):
+        """Proporciona una sesión gestionada automáticamente"""
+        session = self.session_factory()
+        try:
+            yield session
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
 
-# Instancia global (para mantener compatibilidad con imports existentes)
+# Instancia global (ahora mejor gestionada)
 db_config = DatabaseConfig()
 db_config.initialize()
 
-# Exporta los nombres importantes
-__all__ = ['Base', 'db_config', 'DatabaseConfig']
+__all__ = ['Base', 'db_config', 'DatabaseConfig', 'PredictionRepository']
