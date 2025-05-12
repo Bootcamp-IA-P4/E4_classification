@@ -129,8 +129,7 @@ E4_classification/
 ├── .env.example                      # Ejemplo de configuración de entorno
 ├── .gitignore                        # Archivos y carpetas ignorados por git
 ├── .dockerignore                     # Archivos ignorados por Docker
-├── README.md                         # Documentación principal
-└── README2.md                        # Documentación alternativa/histórica
+└── README.md                         # Documentación principal
 
 ---
 
