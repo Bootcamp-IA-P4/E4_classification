@@ -78,6 +78,8 @@ Nuestro modelo utiliza un conjunto completo de variables clínicas para sus pred
 
 ## 📁 Estructura del Proyecto 📁
 
+```markdown
+```
 E4_classification/
 ├── backend/                          # Lógica de backend y API
 │   ├── core/
@@ -130,6 +132,8 @@ E4_classification/
 ├── .gitignore                        # Archivos y carpetas ignorados por git
 ├── .dockerignore                     # Archivos ignorados por Docker
 └── README.md                         # Documentación principal
+```
+```
 
 ---
 
