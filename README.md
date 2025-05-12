@@ -1,137 +1,164 @@
-# Guía de Inicio Rápido
+# ❤️ HeartWise: Predicción de Riesgo Cardiovascular en la Era Digital
+
+<div align="center">
+    <img src="https://img.shields.io/badge/Cardio-Health-ff6f61?style=for-the-badge&logo=heartbeat&logoColor=white" alt="Cardio Health">
+    <img src="https://img.shields.io/badge/Data-Prediction-4ECDC4?style=for-the-badge&logo=spark&logoColor=white" alt="Data Prediction">
+</div>
+
+> *Imagina un consultorio digital donde la ciencia de datos y la medicina preventiva se dan la mano para cuidar tu corazón.*
 
 ---
 
-## 🚀 Pasos para ejecutar la aplicación Dash y conectar con la base de datos
+## 🎵 Bienvenido al Sistema Inteligente de Predicción de Riesgo Cardiaco 🎵
 
-### 1. Clona el repositorio y navega a la carpeta del proyecto
-
-```bash
-cd E4_classification
-```
-
-### 2. Instala las dependencias necesarias
-
-Asegúrate de tener Python 3.8+ instalado. Luego ejecuta:
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Configura la base de datos
-
-- Crea una base de datos MySQL con los parámetros indicados en el archivo `.env` (puedes modificar los valores según tu entorno):
-  - MYSQL_USER
-  - MYSQL_PASSWORD
-  - MYSQL_HOST
-  - MYSQL_PORT
-  - MYSQL_DB
-
-- Asegúrate de que el usuario y la contraseña tengan permisos para crear tablas y escribir datos.
-
-### 4. Verifica la configuración del archivo `.env`
-
-El archivo `.env` debe estar en la raíz del proyecto y contener los datos de conexión a la base de datos. Ejemplo:
-
-```
-MYSQL_USER=root
-MYSQL_PASSWORD=tu_password
-MYSQL_HOST=127.0.0.1
-MYSQL_PORT=3306
-MYSQL_DB=registros_usuarios
-```
-
-### 5. Ejecuta la aplicación Dash
-
-Desde la raíz del proyecto, ejecuta:
-
-```bash
-python -m app.dashy
-```
-
-Esto iniciará la aplicación Dash. Por defecto, estará disponible en [http://127.0.0.1:8050](http://127.0.0.1:8050)
-
-### 6. Uso de la aplicación
-
-- Ingresa los datos requeridos en la interfaz web.
-- Al enviar el formulario, la predicción se almacenará automáticamente en la base de datos configurada.
+¡Descubre la aplicación más innovadora para predecir el riesgo de enfermedad cardíaca! Un proyecto que fusiona tecnología de vanguardia, ciencia de datos y experiencia clínica, transformando variables de salud en predicciones claras y útiles para la toma de decisiones.
 
 ---
 
-# Proyecto de Clasificación
+## 🌊 La Historia Detrás del Proyecto 🌊
+
+Todo comenzó cuando un equipo de entusiastas de la salud y la tecnología decidió llevar la predicción de riesgo cardiovascular a otro nivel:
+
+1. **Análisis de Datos Profundo** 🔍: Exploramos exhaustivamente los datos clínicos, identificando patrones, correlaciones y variables clave. Documentamos cada paso en notebooks de EDA.
+2. **Transformación Inteligente** 🔄: Convertimos variables categóricas a numéricas, estandarizamos valores y limpiamos outliers para obtener un dataset robusto.
+3. **Batalla de Modelos** 🥊: Probamos varios algoritmos de clasificación, pero nos enfocamos en LDA (Análisis Discriminante Lineal) y Naive Bayes.
+4. **LDA: El Modelo Elegido** 👑: Tras rigurosas pruebas, LDA se destacó por su capacidad de detectar la mayor cantidad de pacientes en riesgo (mayor recall), priorizando la prevención.
 
 ---
 
-## 📝 Descripción del Proyecto
+## 🎮 Características Innovadoras 🎮
 
-Este proyecto consiste en desarrollar un modelo de machine learning para resolver un problema de **clasificación**. El objetivo es crear una solución capaz de predecir una clase (por ejemplo, la satisfacción de clientes) a partir de ciertos parámetros, utilizando un dataset adecuado (sugerido: Airlines Dataset, aunque se recomienda buscar uno propio para mayor autenticidad).
-
-La solución final debe incluir una aplicación que reciba los datos de un cliente y devuelva la predicción de clasificación, además de un informe técnico y una presentación para negocio.
-
----
-
-## 📦 Condiciones de Entrega
-
-- Proyecto grupal.
-- Entregar:
-  - Aplicación funcional (Streamlit, Gradio, Dash, etc.) que reciba datos y devuelva la predicción.
-  - Repositorio en GitHub con ramas ordenadas y mensajes de commit claros.
-  - Informe técnico del rendimiento del modelo (métricas y explicación).
-  - Presentación para negocio y presentación técnica del código.
-  - Enlace a Trello u otra herramienta de organización.
-  - Overfitting inferior al 5%.
+* **Frontend Dash** 💾: Interfaz web interactiva y responsiva, 100% Python, sin JavaScript.
+* **Predicción en Tiempo Real** 📊: Resultados inmediatos y visuales.
+* **Flujo Paso a Paso** 🚶: Formulario guiado para capturar variables clínicas clave.
+* **Persistencia en MySQL** 📜: Historial de predicciones seguro y consultable.
+* **FastAPI + Docker** 💪: Backend rápido, seguro y portable.
+* **Tests Automatizados** 🧪: Calidad garantizada en cada actualización.
 
 ---
 
-## 🛠️ Tecnologías a Usar
+## 📊 Variables del Modelo LDA 📊
 
-- Scikit-learn
-- Pandas
-- Streamlit / Dash / Gradio
-- Git y GitHub
-- Docker
+Nuestro modelo utiliza un conjunto completo de variables clínicas para sus predicciones:
 
----
-
-## 🏆 Niveles de Entrega
-
-### 🟢 Nivel Esencial
-
-- Modelo de clasificación funcional.
-- Análisis exploratorio de datos (EDA) con visualizaciones relevantes.
-- Overfitting < 5%.
-- Solución productivizada (app web/API).
-- Informe de métricas de clasificación (accuracy, recall, precision, F1, ROC, matriz de confusión, etc.) y explicación del performance.
-
-### 🟡 Nivel Medio
-
-- Modelos ensemble (Random Forest, Gradient Boosting, XGBoost, etc.).
-- Validación cruzada (K-Fold, Leave-One-Out).
-- Optimización de hiperparámetros (GridSearch, RandomSearch, Optuna, etc.).
-- Sistema de feedback y monitorización en producción.
-- Pipeline de ingestión de nuevos datos.
-
-### 🟠 Nivel Avanzado
-
-- Dockerización del programa.
-- Guardado de datos en bases de datos (SQL, MongoDB, etc.).
-- Despliegue en la nube (AWS, GCP, Azure, Render, Vercel, etc.).
-- Test unitarios (validación de preprocesamiento, métricas mínimas, etc.).
-
-### 🔴 Nivel Experto
-
-- Experimentos/despliegues con redes neuronales.
-- MLOps: A/B Testing, monitoreo de data drift, auto-reemplazo de modelos.
+### Variables Numéricas y Categóricas:
+- `height`: Altura (cm)
+- `weight`: Peso (kg)
+- `bmi`: Índice de masa corporal
+- `general_health`: Salud general (1-5)
+- `age_category`: Grupo de edad (ej: '30-40')
+- `alcohol_consumption`: Consumo de alcohol (veces/semana)
+- `fruit_consumption`: Consumo de frutas (veces/día)
+- `green_vegetables_consumption`: Verduras verdes (veces/día)
+- `fried_potato_consumption`: Papas fritas (veces/semana)
+- `checkup`: Último chequeo médico (años)
+- `exercise`: Ejercicio (días/semana)
+- `skin_cancer`: Cáncer de piel (0=No, 1=Sí)
+- `other_cancer`: Otros cánceres (0=No, 1=Sí)
+- `depression`: Depresión (0=No, 1=Sí)
+- `diabetes`: Diabetes (0=No, 1=Sí)
+- `arthritis`: Artritis (0=No, 1=Sí)
+- `sex`: Sexo biológico (0=M, 1=F)
+- `smoking_history`: Historial tabaquismo (0=No, 1=Sí)
 
 ---
 
-## 🎯 Evaluación
+## 🔧 Pila Tecnológica 🔧
 
-- Evaluar datasets con herramientas de análisis y visualización.
-- Aplicar algoritmos de ML según el problema, identificando y resolviendo problemas clásicos de IA.
+![Python](https://img.shields.io/badge/Python-3.8+-blue?style=flat-square&logo=python)
+![Dash](https://img.shields.io/badge/Dash-2.x-00bfff?style=flat-square&logo=plotly)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.95+-green?style=flat-square&logo=fastapi)
+![MySQL](https://img.shields.io/badge/MySQL-8.x-orange?style=flat-square&logo=mysql)
+![Pandas](https://img.shields.io/badge/Pandas-1.5+-blueviolet?style=flat-square&logo=pandas)
+![Scikit-learn](https://img.shields.io/badge/Scikit--learn-1.2+-orange?style=flat-square&logo=scikit-learn)
+![Docker](https://img.shields.io/badge/Docker-20.10+-blue?style=flat-square&logo=docker)
+![pytest](https://img.shields.io/badge/pytest-8.3+-green?style=flat-square&logo=pytest)
 
 ---
 
-## Estructura Inicial del Proyecto
+## 📁 Estructura del Proyecto 📁
 
-- Este repositorio contiene la estructura base y archivos vacíos para comenzar el desarrollo. A medida que avances, agrega notebooks, scripts, documentación y recursos en las carpetas correspondientes.
+E4_classification/
+├── backend/                          # Lógica de backend y API
+│   ├── core/
+│   │   └── config.py                 # Configuración principal del backend
+│   ├── db/
+│   │   ├── database.py               # Conexión y utilidades de base de datos
+│   │   └── models.py                 # Modelos ORM (SQLAlchemy)
+│   ├── create_back.py                # Script de inicialización backend
+│   ├── dockerfile                    # Dockerfile para backend
+│   └── ...                           # Otros módulos backend
+│
+├── client/                           # Frontend interactivo (Dash)
+│   ├── __init__.py                   # Inicialización del módulo
+│   ├── dashy.py                      # Aplicación Dash principal
+│   ├── dashy_5.py                    # Variante de la app Dash
+│   ├── dockerfile                    # Dockerfile para frontend
+│   ├── assets/                       # Recursos estáticos (CSS, imágenes, etc.)
+│   └── static/                       # Archivos JS estáticos
+│
+├── data/                             # Datos y modelos para ML
+│   ├── CVD_cleaned.csv               # Dataset principal limpio
+│
+├── models/                           # Modelos y scripts auxiliares
+│   └── models.py                     # Definición de modelos ML o utilidades
+│
+├── notebooks/                        # Notebooks de análisis y modelado
+│   ├── models_notebooks/
+│   │   ├── Datos_de_archivos.ipynb   # Análisis de archivos y variables
+│   │   ├── EDA4.ipynb                # Exploración de datos avanzada
+│   │   ├── EDA4_optuna.ipynb         # EDA con optimización de hiperparámetros
+│   │   ├── MODELO_ELEGIDO.ipynb      # Notebook del modelo final elegido
+│   │   └── ...                       # Otros notebooks de experimentación
+│   └── models_pkl/
+│       ├── info_modelo_cardiaco.pkl  # Info y metadatos del modelo
+│       ├── main.py                   # Script de uso de modelos serializados
+│       └── ...                       # Otros archivos PKL y scripts
+│
+├── test/                             # Pruebas automáticas
+│   ├── __init__.py                   # Inicialización de tests
+│   ├── conftest.py                   # Configuración de pytest
+│   ├── test_model_integration.py     # Test de integración de modelo
+│   └── tests.ipynb                   # Notebook de pruebas
+│
+├── venv/                             # Entorno virtual (ignorado por git)
+│
+├── compose.yaml                      # Orquestación de servicios Docker
+├── requirements.txt                  # Dependencias del proyecto
+├── .env                              # Variables de entorno
+├── .env.example                      # Ejemplo de configuración de entorno
+├── .gitignore                        # Archivos y carpetas ignorados por git
+├── .dockerignore                     # Archivos ignorados por Docker
+├── README.md                         # Documentación principal
+└── README2.md                        # Documentación alternativa/histórica
+
+---
+
+## 🚦 Flujo de la Aplicación
+
+1. **El usuario** ingresa sus datos clínicos en la interfaz Dash.
+2. **Dash** envía los datos al backend FastAPI vía HTTP (JSON).
+3. **FastAPI** procesa los datos, ejecuta el modelo LDA y almacena la predicción en MySQL.
+4. **El resultado** (nivel de riesgo y probabilidad) se muestra automáticamente en la interfaz, junto con visualizaciones y mensajes interpretativos.
+
+---
+
+## 🧠 Proceso de Ciencia de Datos
+
+### 1. EDA y Selección de Modelo
+
+- Analizamos y limpiamos los datos, identificando valores atípicos y desbalance de clases.
+- Balanceamos el dataset con submuestreo y SMOTE.
+- Probamos varios modelos, eligiendo LDA por su alto recall (mejor para no dejar enfermos sin detectar).
+
+### 2. Retos y Decisiones
+
+- **Desbalance:** Muchos más sanos que enfermos, lo que dificulta la detección de casos positivos.
+- **Comparación de modelos:** Elegimos LDA porque en salud es mejor advertir de más que dejar pasar un enfermo sin tratar.
+
+#### Ejemplo Didáctico
+
+> Imagina una red para atrapar peces enfermos:
+> - Red NaiveBayes: Atrapa pocos enfermos pero casi nunca se equivoca (alta precisión, bajo recall).
+> - Red LDA: Atrapa más enfermos, aunque a veces atrapa sanos por error (alto recall, menor precisión).
+> - **En salud, preferimos LDA para no dejar enfermos sin detectar.**
