@@ -1,14 +1,14 @@
-/* Base styles */
+/* RESET Y ESTILOS BASE */
 body {
     font-family: 'Segoe UI', sans-serif;
-    background-color: #121212;
-    color: #e0e0e0;
+    background-color: transparent;
+    color: white;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    min-height: 100vh;
 }
 
-/* Video background */
+/* VIDEO DE FONDO */
 .video-background {
     position: fixed;
     top: 0;
@@ -17,96 +17,62 @@ body {
     height: 100vh;
     object-fit: cover;
     z-index: -1;
+    opacity: 0.85;
 }
 
-/* Navbar */
-.navbar {
-    background-color: rgba(18, 18, 18, 0.95);
-    padding: 20px;
-    color: #ffffff;
-    font-size: 1.5em;
-    text-align: center;
-    font-weight: bold;
-}
-
-/* Footer */
-.footer {
-    background-color: #1a1a1a;
-    padding: 20px;
-    text-align: center;
-    color: #777;
-    font-size: 0.9em;
-    position: fixed;
-    bottom: 0;
+/* CONTENEDOR PRINCIPAL */
+.main-container {
     width: 100%;
-}
-
-/* Bloques de formulario */
-.bloque {
-    width: 50%;
-    margin: auto;
+    max-width: 600px;
+    margin: 0 auto;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.3);
-    background-color: rgba(30, 30, 30, 0.95);
 }
 
-/* Dash Dropdown & Input styling */
-.dash-dropdown, .Select-control, .Select-menu-outer, .Select-placeholder, .Select-value, .Select-input {
-    background-color: #232323 !important;
-    color: #e0e0e0 !important;
-    border-radius: 6px !important;
+/* DROPDOWNS Y INPUTS */
+.Select-control, 
+input[type="number"], 
+input[type="text"] {
+    background-color: rgba(0, 0, 0, 0.85) !important;
     border: 1px solid #444 !important;
-    min-height: 38px !important;
+    border-radius: 8px !important;
+    color: white !important;
+    padding: 12px 15px !important;
+    width: 100% !important;
+    margin-bottom: 15px !important;
     font-size: 1em !important;
 }
+
+/* TEXTO EN DROPDOWNS */
+.Select-value-label, 
+.Select-input input {
+    color: white !important;
+    opacity: 1 !important;
+}
+
+/* MENÚ DESPLEGABLE */
 .Select-menu-outer {
-    background-color: #232323 !important;
-    color: #e0e0e0 !important;
+    background-color: rgba(30, 30, 30, 0.98) !important;
+    border: 1px solid #ff4444 !important;
+    color: white !important;
 }
+
 .Select-option {
-    background-color: #232323 !important;
-    color: #e0e0e0 !important;
+    background-color: transparent !important;
+    color: white !important;
+    padding: 12px 15px !important;
 }
+
 .Select-option.is-focused {
-    background-color: #333 !important;
+    background-color: rgba(255, 68, 68, 0.2) !important;
 }
-.Select-value-label {
-    color: #e0e0e0 !important;
-}
-input[type="number"], input[type="text"] {
-    background-color: #232323;
-    color: #e0e0e0;
-    border: 1px solid #444;
-    border-radius: 6px;
-    padding: 8px;
-    font-size: 1em;
-    width: 100%;
-    margin-bottom: 10px;
-}
+
+/* LABELS */
 label {
     display: block;
-    margin-top: 12px;
-    margin-bottom: 4px;
-    font-weight: 500;
-}
-button, .dash-button {
-    background-color: #ff4444;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    padding: 10px 24px;
-    font-size: 1em;
-    margin: 12px 8px 0 0;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-button:hover, .dash-button:hover {
-    background-color: #ff8888;
-}
-.formulario-bloque {
-    margin-top: 40px;
-    margin-bottom: 40px;
+    margin: 5px 0;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+    font-size: 0.95em;
 }
 
 /* Heart animation */
@@ -132,22 +98,34 @@ button:hover, .dash-button:hover {
 
 /* Fixed buttons style */
 .form-button {
-    min-width: 150px;
+    background-color: #ff4444;
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
+    padding: 12px 25px;
+    margin-top: 20px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s;
+    width: 100%;
 }
 
 .form-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: #ff6666;
 }
 
-.form-button.primary {
-    background-color: #ff4d4d;
-    color: white;
-    font-weight: bold;
+/* RESULTADO (CENTRADO) */
+.resultado {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 500px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 
 /* Buttons always at front */

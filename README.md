@@ -78,6 +78,7 @@ Nuestro modelo utiliza un conjunto completo de variables clínicas para sus pred
 
 ## 📁 Estructura del Proyecto 📁
 
+```
 E4_classification/
 ├── backend/                          # Lógica de backend y API
 │   ├── core/
@@ -98,7 +99,6 @@ E4_classification/
 │   └── static/                       # Archivos JS estáticos
 │
 ├── data/                             # Datos y modelos para ML
-│   ├── CVD_cleaned.csv               # Dataset principal limpio
 │
 ├── models/                           # Modelos y scripts auxiliares
 │   └── models.py                     # Definición de modelos ML o utilidades
@@ -129,8 +129,8 @@ E4_classification/
 ├── .env.example                      # Ejemplo de configuración de entorno
 ├── .gitignore                        # Archivos y carpetas ignorados por git
 ├── .dockerignore                     # Archivos ignorados por Docker
-├── README.md                         # Documentación principal
-└── README2.md                        # Documentación alternativa/histórica
+└── README.md                         # Documentación principal
+```
 
 ---
 
@@ -162,3 +162,106 @@ E4_classification/
 > - Red NaiveBayes: Atrapa pocos enfermos pero casi nunca se equivoca (alta precisión, bajo recall).
 > - Red LDA: Atrapa más enfermos, aunque a veces atrapa sanos por error (alto recall, menor precisión).
 > - **En salud, preferimos LDA para no dejar enfermos sin detectar.**
+
+## 🏄‍♂️ Instalación 🏄‍♂️
+
+### Prerequisitos
+
+* Python 3.10+
+* MySQL 8+
+* Docker
+* pytest
+
+### Instalación Manual
+
+1. **Clonar el repositorio:**
+   ```bash
+   git clone <url-repo>
+   cd E4_classification
+   ```
+
+2. **Crear entorno virtual:**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # En Windows: venv\Scripts\activate
+   ```
+
+3. **Instalar dependencias:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Configurar archivo .env:**
+   ```
+   MYSQL_HOST='localhost' # O el nombre del servicio de la base de datos del docker compose
+   MYSQL_USER='tu_usuario'
+   MYSQL_PASSWORD='tu_password_seguro'
+   MYSQL_DB='heart_disease_db'
+   ```
+
+5. **Lanzar la aplicación (backend):**
+   ```bash
+   cd backend/
+   uvicorn main:app --reload
+   ```
+
+6. **Lanzar la aplicación (frontend):**
+   ```bash
+   cd client/
+   python dashy.py
+   ```
+
+### Instalación Con Docker
+
+Para una instalación rápida y sin complicaciones:
+
+```bash
+# Levantar todo el stack con un solo comando:
+docker compose up --build
+
+# Para bajarlo cuando no lo necesites:
+docker compose down
+```
+
+## 🧪 Testing: Verificación de Calidad 🧪
+
+Para correr los test ejecuta:
+
+### Test Individual
+
+```bash
+# Verifica que el modelo carga correctamente:
+pytest
+```
+
+## 🚀 Uso de la Aplicación 🚀
+
+### Con docker ya levantado:
+
+1. **Accede a la aplicación** a través de `http://localhost:8050`
+
+2. **Rellena los campos respectivos**
+
+3. **Sigue el proceso paso a paso** completando los campos:
+   - Elige la estatura y el peso.
+   - Los datos de consumo (alcohol, frutas, vegetales y alimentos fritos).
+   - Rellena tus antecedentes medicos (cáncer, diabetes, depresión o artritis).
+
+4. **Recibe tu predicción** generada por el modelo LDA
+
+## 👥 Equipo de Desarrollo 👥
+
+* [**Maximiliano Scarlato (Scrum Master)**](https://github.com/MaximilianoScarlato) - Liderazgo sagaz y gestión de proyecto
+* [**Anca Bacria**](https://github.com/a-bac-0) - Desarrollo de frontend
+* [**Juan Domingo**](https://github.com/jdomdev) - Desarrollo de backend
+* [**Michael López**](https://github.com/mikewig) - Desarrollo de base de datos y Docker
+
+## 📜 Licencia 📜
+
+Proyecto bajo Licencia de Factoría F5: Aprender, Compartir y Citar la Fuente.
+
+---
+
+*"Prevenir hoy, es vivir mañana"*
+
+*Creado con "Corazón" por el equipo "HeartWise" de Factoría F5* 🫀
