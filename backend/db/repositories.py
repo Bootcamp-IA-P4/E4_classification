@@ -5,16 +5,47 @@ from core.logging_config import setup_logger
 logger = setup_logger(__name__)
 
 class PredictionRepository:
-    """Implementa el patrón Repository para las predicciones"""
-    
     def __init__(self, db: Session):
         self.db = db
-    
-    def save_prediction(self, data: dict) -> PredictionRecord:
-        """Guarda una predicción en la base de datos"""
+    def save_prediction(self, data: dict):
         try:
             logger.info("💾 Guardando predicción en base de datos...")
-            registro = PredictionRecord(**data)
+            
+            # Verificar campos requeridos
+            required_fields = [
+    "height",
+    "weight",
+    "bmi",
+    "alcohol_consumption",
+    "fruit_consumption",
+    "green_vegetables_consumption",
+    "fried_potato_consumption",
+    "general_health",
+    "checkup",
+    "exercise",
+    "skin_cancer",
+    "other_cancer",
+    "depression",
+    "diabetes",
+    "arthritis",
+    "sex",
+    "smoking_history",
+    "age_category",
+    "prediction_result",
+    "probability"
+]
+  # Añade todos los requeridos
+            for field in required_fields:
+                if field not in data or data[field] is None:
+                    raise ValueError(f"Campo requerido faltante: {field}")
+            
+            # Crear el registro con solo los campos válidos
+            valid_data = {
+                k: v for k, v in data.items() 
+                if hasattr(PredictionRecord, k)
+            }
+            
+            registro = PredictionRecord(**valid_data)
             self.db.add(registro)
             self.db.commit()
             logger.info("✅ Predicción guardada exitosamente")
